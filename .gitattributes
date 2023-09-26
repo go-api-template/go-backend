@@ -1,0 +1,9 @@
+# Autodetect text files
+* text=auto
+
+# Text files
+*.txt text
+*.go text
+
+
+

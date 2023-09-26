@@ -1,0 +1,28 @@
+# Use Task to define tasks and run them locally or in CI
+# For more information about Task, see https://taskfile.dev/#/usage?id=usage
+version: '3'
+
+tasks:
+    pull:
+        desc: "Pull the docker images"
+        cmds:
+            - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} pull
+        silent: true
+
+    build:
+        desc: "Build the docker services"
+        cmds:
+            - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} build
+        silent: true
+
+    up:
+        desc: "Start the docker services"
+        cmds:
+            - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} up -d
+        silent: true
+
+    down:
+        desc: "Stop the docker services"
+        cmds:
+            - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} down
+        silent: true

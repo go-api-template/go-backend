@@ -1,0 +1,29 @@
+
+services:
+
+  # Postgres database
+  database:
+      container_name: ${APP_NAME}-database
+      hostname: ${APP_NAME}-database
+      image: postgres:16
+      restart: always
+      environment:
+        POSTGRES_USER: ${DB_USER}
+        POSTGRES_PASSWORD: ${DB_PASSWORD}
+        POSTGRES_DB: ${DB_NAME}
+        POSTGRES_CHARSET: ${DB_CHARSET}
+        TZ: ${TIMEZONE}
+        PGTZ: ${TIMEZONE}
+      ports:
+        - "${DB_PORT}:5432"
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+# Declare volumes to mount
+volumes:
+  postgres_data: {}
