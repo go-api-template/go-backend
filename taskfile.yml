@@ -15,9 +15,6 @@ vars:
         sh: echo '{{if eq .APP_ENV "production"}}{{.APP_NAME}}{{else}}{{.APP_NAME}}-{{.SHORT_ENV_NAME}}{{end}}'
     GIT_COMMIT:
         desc: "The git commit hash of the current commit."
-        sh: git rev-parse HEAD
-    GIT_SHA:
-        desc: "The git commit hash of the current commit."
         sh: git rev-parse --short HEAD
     GIT_TAG:
         desc: "The git tag of the current commit."
@@ -25,12 +22,15 @@ vars:
     GIT_TAG_COMMIT:
         desc: "The last tagged commit."
         sh: git rev-list --abbrev-commit --tags --max-count=1
+    GIT_BUILD:
+        desc: "The number of commits since the last tag."
+        sh: echo '{{if ne .GIT_COMMIT .GIT_TAG_COMMIT}}-{{.GIT_COMMIT}}{{end}}'
     GIT_DIRTY:
         desc: "Whether the git repository is dirty."
         sh: git diff --quiet || echo "+dirty"
     VERSION:
         desc: "The version of the image."
-        sh: echo '{{.GIT_TAG}}-{{.GIT_SHA}}{{.GIT_DIRTY}}'
+        sh: echo '{{.GIT_TAG}}{{.GIT_BUILD}}{{.GIT_DIRTY}}'
     BUILD_DATE:
         desc: "The date the image was built."
         sh: git log -1 --format=%cd --date=format:'%Y-%m-%dT%H:%M:%SZ'
