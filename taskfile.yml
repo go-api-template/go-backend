@@ -27,8 +27,37 @@ vars:
         sh: git rev-list --abbrev-commit --tags --max-count=1
     GIT_DIRTY:
         desc: "Whether the git repository is dirty."
-        sh: test "`git diff --name-only | wc -l`" != "0" && echo +dirty
+        sh: git diff --quiet || echo "+dirty"
+    VERSION:
+        desc: "The version of the image."
+        sh: echo '{{.GIT_TAG}}-{{.GIT_SHA}}{{.GIT_DIRTY}}'
+    BUILD_DATE:
+        desc: "The date the image was built."
+        sh: git log -1 --format=%cd --date=format:'%Y-%m-%dT%H:%M:%SZ'
 
 # Import tasks from other files
 includes:
     docker: ./.task/docker.taskfile.yml
+
+# Define tasks
+
+tasks:
+    hello:
+        cmds:
+            - echo 'Hello World from Task!'
+        silent: true
+
+    info:
+        desc: "Display information about the project."
+        cmds:
+            - echo "APP_NAME {{.APP_NAME}}"
+            - echo "APP_ENV {{.APP_ENV}}"
+            - echo "PROJECT_NAME {{.PROJECT_NAME}}"
+            - echo "GIT_COMMIT {{.GIT_COMMIT}}"
+            - echo "GIT_SHA {{.GIT_SHA}}"
+            - echo "GIT_TAG {{.GIT_TAG}}"
+            - echo "GIT_TAG_COMMIT {{.GIT_TAG_COMMIT}}"
+            - echo "GIT_DIRTY {{.GIT_DIRTY}}"
+            - echo "BUILD_DATE {{.BUILD_DATE}}"
+            - echo "VERSION {{.VERSION}}"
+        silent: true
