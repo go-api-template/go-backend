@@ -34,31 +34,24 @@ vars:
     BUILD_DATE:
         desc: "The date the image was built."
         sh: git log -1 --format=%cd --date=format:'%Y-%m-%dT%H:%M:%SZ'
+    BUILD_FOLDER:
+        desc: "The folder where the build is happening. Current folder/build"
+        sh: echo "build"
+    RELEASE_FOLDER:
+        desc: "The folder where the release is happening. Current folder/release"
+        sh: echo "dist"
 
 
 # Import tasks from other files
 includes:
     docker: ./.task/docker.taskfile.yml
+    go: ./.task/go.taskfile.yml
 
 # Define tasks
-
 tasks:
-    hello:
-        cmds:
-            - echo 'Hello World from Task!'
-        silent: true
 
     info:
         desc: "Display information about the project."
         cmds:
-            - echo "APP_NAME {{.APP_NAME}}"
-            - echo "APP_ENV {{.APP_ENV}}"
-            - echo "PROJECT_NAME {{.PROJECT_NAME}}"
-            - echo "GIT_COMMIT {{.GIT_COMMIT}}"
-            - echo "GIT_SHA {{.GIT_SHA}}"
-            - echo "GIT_TAG {{.GIT_TAG}}"
-            - echo "GIT_TAG_COMMIT {{.GIT_TAG_COMMIT}}"
-            - echo "GIT_DIRTY {{.GIT_DIRTY}}"
-            - echo "BUILD_DATE {{.BUILD_DATE}}"
-            - echo "VERSION {{.VERSION}}"
+            - echo "{{.APP_NAME}} ({{.VERSION}}) will be running in '{{.APP_ENV}}' mode."
         silent: true

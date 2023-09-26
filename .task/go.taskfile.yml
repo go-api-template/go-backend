@@ -1,0 +1,90 @@
+# Use Task to define tasks and run them locally or in CI
+# For more information about Task, see https://taskfile.dev/#/usage?id=usage
+version: '3'
+
+tasks:
+#    default: clean generate swag fmt vet lint test gosec build
+
+    default:
+        desc: "Run the default tasks"
+        deps:
+            - task: clean
+            - task: generate
+            - task: swag
+            - task: fmt
+            - task: vet
+            - task: lint
+            - task: test
+            - task: gosec
+            - task: build
+
+    tidy:
+        desc: "Tidy the go code"
+        cmds:
+            - go mod tidy
+        silent: true
+
+    generate:
+        desc: "Generate the go code"
+        cmds:
+            - go generate ./...
+        silent: true
+
+    swag:
+        desc: "Generate swagger docs"
+        cmds:
+            - swag fmt
+            - swag init --parseDependency --parseInternal
+        silent: true
+
+    fmt:
+        desc: "Format the go code"
+        cmds:
+            - go fmt ./...
+        silent: true
+
+    vet:
+        desc: "Vet the go code"
+        cmds:
+            - go vet ./...
+        silent: true
+
+    lint:
+        desc: "Lint the go code"
+        cmds:
+            - golangci-lint run ./...
+        silent: true
+
+    test:
+        desc: "Test the go code"
+        cmds:
+            - go test -race -covermode=atomic -coverprofile=coverage.out ./...
+            - go tool cover -html=coverage.out -o coverage.html
+
+    gosec:
+        desc: "Run gosec on the go code"
+        cmds:
+            - gosec ./...
+        silent: true
+
+    build:
+        desc: "Build the go binary"
+        cmds:
+            - go build -v -trimpath -ldflags "-w -s -X main.version={{.VERSION}} -X main.buildDate={{.BUILD_DATE}}" -o {{.BUILD_FOLDER}}/{{.APP_NAME}}{{exeExt}}
+        silent: true
+
+    release:
+        desc: "Build the go binary for release"
+        cmds:
+            - env GOOS=darwin GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X main.version={{.VERSION}} -X main.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_darwin_amd64.tar.gz {{.APP_NAME}}; rm -f {{.APP_NAME}}
+            - env GOOS=linux GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X main.version={{.VERSION}} -X main.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_linux_amd64.tar.gz {{.APP_NAME}}; rm -f {{.APP_NAME}}
+            - env GOOS=windows GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X main.version={{.VERSION}} -X main.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}{{exeExt}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_windows_amd64.tar.gz {{.APP_NAME}}{{exeExt}}; rm -f {{.APP_NAME}}{{exeExt}}
+        silent: true
+
+    clean:
+        desc: "Clean the go binary"
+        cmds:
+            - rm -rf {{.BUILD_FOLDER}}
+            - rm -rf {{.RELEASE_FOLDER}}
+            - rm -f coverage.*
+        silent: true
