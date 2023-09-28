@@ -3,7 +3,7 @@
 version: '3'
 
 # Import environment variables from app.env
-dotenv: ['app.env']
+dotenv: ['app.dev.env', 'app.env']
 
 # Define variables to use in tasks
 vars:
@@ -46,6 +46,8 @@ vars:
 includes:
     docker: ./.task/docker.taskfile.yml
     go: ./.task/go.taskfile.yml
+    password: ./.task/password.taskfile.yml
+    keygen: ./.task/keygen.taskfile.yml
 
 # Define tasks
 tasks:

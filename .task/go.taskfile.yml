@@ -70,15 +70,15 @@ tasks:
     build:
         desc: "Build the go binary"
         cmds:
-            - go build -v -trimpath -ldflags "-w -s -X main.version={{.VERSION}} -X main.buildDate={{.BUILD_DATE}}" -o {{.BUILD_FOLDER}}/{{.APP_NAME}}{{exeExt}}
+            - go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.BUILD_FOLDER}}/{{.APP_NAME}}{{exeExt}}
         silent: true
 
     release:
         desc: "Build the go binary for release"
         cmds:
-            - env GOOS=darwin GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X main.version={{.VERSION}} -X main.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_darwin_amd64.tar.gz {{.APP_NAME}}; rm -f {{.APP_NAME}}
-            - env GOOS=linux GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X main.version={{.VERSION}} -X main.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_linux_amd64.tar.gz {{.APP_NAME}}; rm -f {{.APP_NAME}}
-            - env GOOS=windows GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X main.version={{.VERSION}} -X main.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}{{exeExt}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_windows_amd64.tar.gz {{.APP_NAME}}{{exeExt}}; rm -f {{.APP_NAME}}{{exeExt}}
+            - env GOOS=darwin GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_darwin_amd64.tar.gz {{.APP_NAME}}; rm -f {{.APP_NAME}}
+            - env GOOS=linux GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_linux_amd64.tar.gz {{.APP_NAME}}; rm -f {{.APP_NAME}}
+            - env GOOS=windows GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}{{exeExt}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_windows_amd64.tar.gz {{.APP_NAME}}{{exeExt}}; rm -f {{.APP_NAME}}{{exeExt}}
         silent: true
 
     clean:
@@ -87,4 +87,10 @@ tasks:
             - rm -rf {{.BUILD_FOLDER}}
             - rm -rf {{.RELEASE_FOLDER}}
             - rm -f coverage.*
+        silent: true
+
+    update:
+        desc: "Update the go dependencies"
+        cmds:
+            - go get -u ./...
         silent: true

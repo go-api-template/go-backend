@@ -1,0 +1,20 @@
+# Use Task to define tasks and run them locally or in CI
+# For more information about Task, see https://taskfile.dev/#/usage?id=usage
+version: '3'
+
+tasks:
+    generate:
+        desc: "Generate public and private keys for the application, then encode each file to base64."
+        vars:
+            KEY_FOLDER:
+                sh: date +%s
+        cmds:
+            - echo "Generating keys in .keys/{{.KEY_FOLDER}}..."
+            - mkdir -p .keys/{{.KEY_FOLDER}}/
+            - openssl genrsa -out .keys/{{.KEY_FOLDER}}/private.pem 3096
+            - openssl rsa -in .keys/{{.KEY_FOLDER}}/private.pem -outform PEM -pubout -out .keys/{{.KEY_FOLDER}}/public.pem
+            - base64 --wrap=0 .keys/{{.KEY_FOLDER}}/private.pem > .keys/{{.KEY_FOLDER}}/private.pem.base64
+            - base64 --wrap=0 .keys/{{.KEY_FOLDER}}/public.pem > .keys/{{.KEY_FOLDER}}/public.pem.base64
+            - echo "Keys generated and encoded to base64"
+        silent: true
+

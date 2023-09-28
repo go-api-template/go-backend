@@ -148,3 +148,5 @@ fabric.properties
 
 # Uncomment the following lines commiting your files
 #docker-compose.prod.yml
+
+todo.md
