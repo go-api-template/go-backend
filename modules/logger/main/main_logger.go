@@ -1,4 +1,4 @@
-package mainLogger
+package main_logger
 
 import (
 	"github.com/go-mods/zerolog-quick/console/colored"

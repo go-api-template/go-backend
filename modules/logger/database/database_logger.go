@@ -1,4 +1,4 @@
-package databaseLogger
+package database_logger
 
 import (
 	"github.com/go-api-template/go-backend/modules/config"

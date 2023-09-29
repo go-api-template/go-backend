@@ -3,7 +3,6 @@
 version: '3'
 
 tasks:
-#    default: clean generate swag fmt vet lint test gosec build
 
     default:
         desc: "Run the default tasks"

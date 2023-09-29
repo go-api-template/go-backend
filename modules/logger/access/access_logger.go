@@ -1,4 +1,4 @@
-package accessLogger
+package access_logger
 
 import (
 	"github.com/go-api-template/go-backend/modules/config"

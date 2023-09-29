@@ -26,3 +26,9 @@ tasks:
         cmds:
             - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} down
         silent: true
+
+    clean:
+        desc: "Clean the docker services"
+        cmds:
+            - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} down -v --remove-orphans
+        silent: true
