@@ -1,13 +1,12 @@
 definitions:
-  controllers.StatusResponse:
+  httputil.Error:
     properties:
-      database:
-        type: string
-      redis:
-        type: string
-      version:
-        type: string
-      welcome:
+      code:
+        example: 404
+        type: integer
+      data: {}
+      message:
+        example: not found
         type: string
     type: object
   httputil.Message:
@@ -20,14 +19,118 @@ definitions:
         example: a server message
         type: string
     type: object
+  models.AccessToken:
+    properties:
+      AccessToken:
+        type: string
+    type: object
+  models.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.UserSignIn:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.UserSignUp:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      passwordConfirm:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - passwordConfirm
+    type: object
 info:
   contact: {}
 paths:
-  /healthcheck:
+  /auth/refresh:
     get:
       consumes:
       - application/json
-      description: Send a welcome message if the server is online
+      description: Refresh the access token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AccessToken'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Refresh the access token
+      tags:
+      - auth
+  /auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: Sign in a user
+      parameters:
+      - description: User credential
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserSignIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AccessToken'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Sign in a user
+      tags:
+      - auth
+  /auth/signout:
+    get:
+      consumes:
+      - application/json
+      description: Sign out current user
       produces:
       - application/json
       responses:
@@ -35,22 +138,56 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/httputil.Message'
-      summary: Check if the server is online
+      summary: Sign out current user
       tags:
-      - info
-  /status:
-    get:
+      - auth
+  /auth/signup:
+    post:
       consumes:
       - application/json
-      description: Return information about the server
+      description: Sign up a new user
+      parameters:
+      - description: User sign up
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserSignUp'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/controllers.StatusResponse'
-      summary: Status of the server
+            $ref: '#/definitions/models.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "412":
+          description: Precondition Failed
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Sign up a new user
       tags:
-      - info
+      - auth
+  /users/me:
+    get:
+      consumes:
+      - application/json
+      description: Get the current user
+      produces:
+      - application/json
+      responses: {}
+      summary: Get the current user
+      tags:
+      - user
 swagger: "2.0"

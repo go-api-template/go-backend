@@ -7,9 +7,17 @@ import (
 )
 
 type Routes struct {
-	HealthRoutes  HealthRouteController
-	InfoRoute     StatusRouteController
+	// SwaggerRoutes is the controller for swagger documentation
 	SwaggerRoutes SwaggerRouteController
+
+	// HealthRoutes and InfoRoute are the controllers which handle
+	// various health and status checks
+	HealthRoutes HealthRouteController
+	InfoRoute    StatusRouteController
+
+	// Routes below are routes for the various controllers
+	AuthRoutes AuthRoutesController
+	UserRoutes UserRoutesController
 }
 
 var (
@@ -32,16 +40,22 @@ func (r *Routes) initialize(c *controllers.Controllers) {
 	// Initialize routes
 	r.HealthRoutes = NewHealthRouteController(c.HealthController)
 	r.InfoRoute = NewStatusRouteController(c.StatusController)
+	r.AuthRoutes = NewAuthRoutesController(c.AuthController)
+	r.UserRoutes = NewUserRoutesController(c.UserController)
 }
 
 func (r *Routes) mountRoutes(gr *gin.Engine) {
-	// Public root routes
+	// Routes declared here are mounted to "/" path
 	rgRoot := gr.Group("/")
 	r.HealthRoutes.NewRoutes(rgRoot)
 	r.InfoRoute.NewRoutes(rgRoot)
 
-	// docs routes
+	// Routes declared here are mounted to "/docs" path
 	rgDocs := gr.Group("/docs")
 	r.SwaggerRoutes.NewRoutes(rgDocs)
-	_ = rgDocs
+
+	// Routes declared here are mounted to "/api/v1" path
+	rgApiV1 := gr.Group("/api/v1")
+	r.AuthRoutes.NewRoutes(rgApiV1)
+	r.UserRoutes.NewRoutes(rgApiV1)
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/go-api-template/go-backend/modules/config"
 	"github.com/go-api-template/go-backend/modules/database/postgres"
 	redis_db "github.com/go-api-template/go-backend/modules/database/redis"
+	"github.com/go-api-template/go-backend/modules/middlewares"
 	"github.com/go-api-template/go-backend/modules/router"
 	"github.com/go-api-template/go-backend/routes"
 	"github.com/go-api-template/go-backend/services"
@@ -46,6 +47,9 @@ func (s *Server) Run() (err error) {
 	s.services = services.NewServices(s.ctx, s.gormDb, s.sqlDb, s.redis)
 	s.controllers = controllers.NewControllers(s.services)
 	s.routes = routes.NewRoutes(s.router, s.controllers)
+
+	// Initialize the middlewares
+	middlewares.InitializeAuthorizer(s.services.UserService)
 
 	//
 	defer func(sqlDb *sql.DB) { _ = sqlDb.Close() }(s.sqlDb)

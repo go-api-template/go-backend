@@ -17,6 +17,7 @@ services:
             - "${POSTGRES_PORT}:5432"
         volumes:
             - postgres_data:/var/lib/postgresql/data
+            - ./.docker/postgres/docker-entrypoint-initdb/uuid-extension.sql:/docker-entrypoint-initdb.d/uuid-extension.sql
         networks:
             - database_network
         healthcheck:

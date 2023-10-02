@@ -115,7 +115,6 @@ type AppConfig struct {
 		Host        string `env:"APP_HOST" validate:"required"`
 		Port        string `env:"APP_PORT" validate:"required"`
 		Url         string
-		BasePath    string `env:"APP_BASE_PATH"`
 		FrontEndUrl string `env:"APP_FRONT_END_URL"`
 	}
 

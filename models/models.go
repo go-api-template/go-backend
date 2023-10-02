@@ -33,7 +33,9 @@ func (m *models) registerSerializers() {
 func (m *models) autoMigrate() {
 	// Initialize models
 	err := m.gormDb.Debug().Transaction(func(tx *gorm.DB) error {
-		return tx.AutoMigrate()
+		return tx.AutoMigrate(
+			&User{},
+		)
 	})
 	if err != nil {
 		log.Fatal().Err(err).Msg("Migrating models")

@@ -12,6 +12,8 @@ type Controllers struct {
 	SwaggerController SwaggerController
 	StatusController  StatusController
 	HealthController  HealthController
+	AuthController    IAuthController
+	UserController    IUserController
 }
 
 var (
@@ -34,4 +36,6 @@ func (c *Controllers) initialize(s *services.Services) {
 	c.SwaggerController = NewSwaggerController()
 	c.StatusController = NewStatusController(s.StatusService)
 	c.HealthController = NewHealthController()
+	c.AuthController = NewAuthController(s.UserService)
+	c.UserController = NewUserController(s.UserService)
 }

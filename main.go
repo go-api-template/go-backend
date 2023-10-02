@@ -15,7 +15,6 @@ func main() {
 	docs.SwaggerInfo.Description = "API server pour GoVoit"
 	docs.SwaggerInfo.Version = config.Config.App.Version
 	docs.SwaggerInfo.Host = config.Config.Server.Host
-	docs.SwaggerInfo.BasePath = config.Config.Server.BasePath
 	docs.SwaggerInfo.Schemes = []string{config.Config.Server.Scheme}
 
 	// Prevent port 80 and 443 to be displayed in swagger url

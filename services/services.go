@@ -9,7 +9,9 @@ import (
 )
 
 type Services struct {
-	StatusService StatusService
+	StatusService IStatusService
+	AuthService   IAuthService
+	UserService   IUserService
 }
 
 var (
@@ -27,6 +29,8 @@ func NewServices(ctx context.Context, gorm *gorm.DB, sql *sql.DB, redis *redis.C
 	return s
 }
 
-func (s *Services) initialize(ctx context.Context, _ *gorm.DB, sql *sql.DB, redis *redis.Client) {
+func (s *Services) initialize(ctx context.Context, gorm *gorm.DB, sql *sql.DB, redis *redis.Client) {
 	s.StatusService = NewInfoService(ctx, sql, redis)
+	s.AuthService = NewAuthService(ctx, gorm)
+	s.UserService = NewUserService(ctx, gorm)
 }

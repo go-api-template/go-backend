@@ -9,10 +9,10 @@ import (
 )
 
 type StatusController struct {
-	statusService services.StatusService
+	statusService services.IStatusService
 }
 
-func NewStatusController(statusService services.StatusService) StatusController {
+func NewStatusController(statusService services.IStatusService) StatusController {
 	return StatusController{statusService}
 }
 
