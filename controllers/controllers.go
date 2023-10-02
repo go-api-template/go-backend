@@ -32,6 +32,6 @@ func NewControllers(s *services.Services) *Controllers {
 func (c *Controllers) initialize(s *services.Services) {
 	// Initialize controllers
 	c.SwaggerController = NewSwaggerController()
-	c.StatusController = NewStatusController(s.InfoService)
+	c.StatusController = NewStatusController(s.StatusService)
 	c.HealthController = NewHealthController()
 }

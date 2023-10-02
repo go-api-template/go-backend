@@ -5,8 +5,8 @@ version: '3'
 tasks:
 
     default:
-        desc: "Run the default tasks"
-        deps:
+        desc: "Run the default go tasks"
+        cmds:
             - task: clean
             - task: generate
             - task: swag
@@ -20,18 +20,21 @@ tasks:
     tidy:
         desc: "Tidy the go code"
         cmds:
+            - echo "Tidying..."
             - go mod tidy
         silent: true
 
     generate:
         desc: "Generate the go code"
         cmds:
+            - echo "Generating..."
             - go generate ./...
         silent: true
 
     swag:
         desc: "Generate swagger docs"
         cmds:
+            - echo "Generating swagger docs..."
             - swag fmt
             - swag init --parseDependency --parseInternal
         silent: true
@@ -39,42 +42,57 @@ tasks:
     fmt:
         desc: "Format the go code"
         cmds:
+            - echo "Formatting..."
             - go fmt ./...
         silent: true
 
     vet:
         desc: "Vet the go code"
         cmds:
+            - echo "Vetting..."
             - go vet ./...
         silent: true
 
     lint:
         desc: "Lint the go code"
         cmds:
+            - echo "Linting..."
             - golangci-lint run ./...
         silent: true
 
     test:
         desc: "Test the go code"
         cmds:
-            - go test -race -covermode=atomic -coverprofile=coverage.out ./...
-            - go tool cover -html=coverage.out -o coverage.html
+            - echo "Testing..."
+            - go test ./...
+        silent: true
+
+    test-coverage:
+        desc: "Test the go code with coverage"
+        cmds:
+            - echo "Generating test coverage..."
+            - go test -v ./... -covermode=atomic -coverpkg=./... -coverprofile coverage.out
+            - go tool cover -html coverage.out -o coverage.html
+        silent: true
 
     gosec:
         desc: "Run gosec on the go code"
         cmds:
+            - echo "Running gosec..."
             - gosec ./...
         silent: true
 
     build:
         desc: "Build the go binary"
         cmds:
+            - echo "Building..."
             - go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.BUILD_FOLDER}}/{{.APP_NAME}}{{exeExt}}
         silent: true
 
     release:
         desc: "Build the go binary for release"
         cmds:
+            - echo "Building release..."
             - env GOOS=darwin GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_darwin_amd64.tar.gz {{.APP_NAME}}; rm -f {{.APP_NAME}}
             - env GOOS=linux GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_linux_amd64.tar.gz {{.APP_NAME}}; rm -f {{.APP_NAME}}
             - env GOOS=windows GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}{{exeExt}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_windows_amd64.tar.gz {{.APP_NAME}}{{exeExt}}; rm -f {{.APP_NAME}}{{exeExt}}
@@ -83,6 +101,7 @@ tasks:
     clean:
         desc: "Clean the go binary"
         cmds:
+            - echo "Cleaning..."
             - rm -rf {{.BUILD_FOLDER}}
             - rm -rf {{.RELEASE_FOLDER}}
             - rm -f coverage.*
@@ -91,5 +110,6 @@ tasks:
     update:
         desc: "Update the go dependencies"
         cmds:
+            - echo "Updating dependencies..."
             - go get -u ./...
         silent: true

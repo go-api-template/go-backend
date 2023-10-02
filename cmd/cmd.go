@@ -31,9 +31,6 @@ func newCmd() *cobra.Command {
 	mainCmd.AddGroup(&cobra.Group{ID: "server", Title: color.HiGreen.Sprint("Server:")})
 	mainCmd.AddCommand(o.RunCmd)
 
-	//
-	mainCmd.CompletionOptions.DisableDefaultCmd = true
-
 	return mainCmd
 }
 

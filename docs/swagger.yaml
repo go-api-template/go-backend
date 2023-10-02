@@ -1,4 +1,56 @@
+definitions:
+  controllers.StatusResponse:
+    properties:
+      database:
+        type: string
+      redis:
+        type: string
+      version:
+        type: string
+      welcome:
+        type: string
+    type: object
+  httputil.Message:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data: {}
+      message:
+        example: a server message
+        type: string
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /healthcheck:
+    get:
+      consumes:
+      - application/json
+      description: Send a welcome message if the server is online
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httputil.Message'
+      summary: Check if the server is online
+      tags:
+      - info
+  /status:
+    get:
+      consumes:
+      - application/json
+      description: Return information about the server
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.StatusResponse'
+      summary: Status of the server
+      tags:
+      - info
 swagger: "2.0"

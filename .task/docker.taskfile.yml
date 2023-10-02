@@ -6,29 +6,29 @@ tasks:
     pull:
         desc: "Pull the docker images"
         cmds:
-            - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} pull
+            - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} pull
         silent: true
 
     build:
         desc: "Build the docker services"
         cmds:
-            - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} build
+            - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} build
         silent: true
 
     up:
         desc: "Start the docker services"
         cmds:
-            - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} up -d
+            - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} up -d
         silent: true
 
     down:
         desc: "Stop the docker services"
         cmds:
-            - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} down
+            - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} down
         silent: true
 
     clean:
         desc: "Clean the docker services"
         cmds:
-            - docker compose -f docker-compose.yml -f docker-compose.{{ .SHORT_ENV_NAME }}.yml --project-name {{ .PROJECT_NAME }} down -v --remove-orphans
+            - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} down -v --remove-orphans
         silent: true
