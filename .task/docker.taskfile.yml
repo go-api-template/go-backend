@@ -6,19 +6,34 @@ tasks:
     pull:
         desc: "Pull the docker images"
         cmds:
-            - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} pull
+            - |
+                if [ -f docker-compose.{{.SHORT_ENV_NAME}}.yml ]; then
+                  docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} pull
+                else
+                  docker compose -f docker-compose.yml --project-name {{.PROJECT_NAME}} pull
+                fi
         silent: true
 
     build:
         desc: "Build the docker services"
         cmds:
-            - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} build
+            - |
+                if [ -f docker-compose.{{.SHORT_ENV_NAME}}.yml ]; then
+                  docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} build
+                else
+                  docker compose -f docker-compose.yml --project-name {{.PROJECT_NAME}} build
+                fi
         silent: true
 
     up:
         desc: "Start the docker services"
         cmds:
-            - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} up -d
+            - |
+                if [ -f docker-compose.{{.SHORT_ENV_NAME}}.yml ]; then
+                  docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} up -d
+                else
+                  docker compose -f docker-compose.yml --project-name {{.PROJECT_NAME}} up -d
+                fi
             - echo "Api server http://localhost:{{.APP_PORT}}"
             - echo "PgAdmin http://localhost:{{.PGADMIN_HTTP_PORT}}"
             - echo "Mailhog http://localhost:{{.MAILHOG_HTTP_PORT}}"
@@ -28,11 +43,21 @@ tasks:
     down:
         desc: "Stop the docker services"
         cmds:
-            - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} down
+            - |
+                if [ -f docker-compose.{{.SHORT_ENV_NAME}}.yml ]; then
+                  docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} down
+                else
+                  docker compose -f docker-compose.yml --project-name {{.PROJECT_NAME}} down
+                fi
         silent: true
 
     clean:
         desc: "Clean the docker services"
         cmds:
-            - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} down -v --remove-orphans
+            - |
+                if [ -f docker-compose.{{.SHORT_ENV_NAME}}.yml ]; then
+                  docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} down -v --remove-orphans
+                else
+                  docker compose -f docker-compose.yml --project-name {{.PROJECT_NAME}} down -v --remove-orphans
+                fi
         silent: true

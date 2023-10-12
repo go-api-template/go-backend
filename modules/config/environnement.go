@@ -5,12 +5,12 @@ package config
 type Environnement string
 
 const (
-	// Development environnement
-	Development Environnement = "development"
 	// Production environnement
 	Production Environnement = "production"
-	// Test environnement
-	Test Environnement = "test"
+	// Development environnement
+	Development Environnement = "development"
+	// Staging environnement
+	Staging Environnement = "staging"
 )
 
 // String returns the string representation of the environnement
@@ -18,39 +18,24 @@ func (e Environnement) String() string {
 	return string(e)
 }
 
-//// ParseRole parses a string into a Role
-//func ParseRole(s string) (r Role, err error) {
-//	roles := map[Role]struct{}{
-//		RoleAdmin: {},
-//		RoleUser:  {},
-//	}
-//
-//	r = Role(s)
-//	_, ok := roles[r]
-//	if !ok {
-//		return r, fmt.Errorf(`cannot parse:[%s] as Role`, s)
-//	}
-//	return r, nil
-//}
+// IsProduction returns true if the environnement is production
+func (e Environnement) IsProduction() bool {
+	return e == Production
+}
 
 // IsDevelopment returns true if the environnement is development
 func (e Environnement) IsDevelopment() bool {
 	return e == Development
 }
 
-// IsProduction returns true if the environnement is production
-func (e Environnement) IsProduction() bool {
-	return e == Production
-}
-
-// IsTest returns true if the environnement is test
-func (e Environnement) IsTest() bool {
-	return e == Test
+// IsStaging returns true if the environnement is staging
+func (e Environnement) IsStaging() bool {
+	return e == Staging
 }
 
 // IsLocal returns true if the environnement is development or test
 func (e Environnement) IsLocal() bool {
-	return e.IsDevelopment() || e.IsTest()
+	return e.IsDevelopment() || e.IsStaging()
 }
 
 // IsRemote returns true if the environnement is production

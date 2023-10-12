@@ -9,7 +9,6 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"net/mail"
-	"os"
 	"time"
 )
 
@@ -27,7 +26,7 @@ type AppConfig struct {
 	// todo : add more comments
 	App struct {
 		Name          string `env:"APP_NAME" validate:"required"`
-		env           string `env:"APP_ENV" default:"production" validate:"required,oneof=development production test"`
+		env           string `env:"APP_ENV" default:"production" validate:"required,oneof=production development staging"`
 		Environnement Environnement
 		Debug         bool `env:"APP_DEBUG" default:"false"`
 		Version       string
@@ -195,13 +194,8 @@ func (c *AppConfig) load() {
 	// Add feeder to load from default values
 	loader.AddFeeder(myfeeder.Default{})
 
-	// Add feeder to load from app.env file
-	if _, err := os.Stat("app.env"); err == nil {
-		loader.AddFeeder(feeder.DotEnv{Path: "app.env"})
-	}
-	if _, err := os.Stat("app.dev.env"); err == nil {
-		loader.AddFeeder(feeder.DotEnv{Path: "app.dev.env"})
-	}
+	// Add feeder to load from *.env file
+	loader.AddFeeder(myfeeder.GlobEnvs{Patterns: []string{"app.env", "app.*.env"}})
 
 	// Add feeder to load from environment variables
 	loader.AddFeeder(feeder.Env{})
