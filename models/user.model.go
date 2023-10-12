@@ -1,26 +1,28 @@
 package models
 
 import (
+	"github.com/go-api-template/go-backend/modules/config"
 	"github.com/google/uuid"
 	"time"
 )
 
 type User struct {
-	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	Name      string    `gorm:"type:varchar(255);not null"`
-	Email     string    `gorm:"uniqueIndex;not null"`
-	Password  string    `gorm:"not null"`
-	Role      Role      `gorm:"type:varchar(255);not null"`
-	Verified  bool      `gorm:"not null"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID uuid.UUID `json:"id"                            gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+	//Name             string    `json:"name"                          gorm:"type:varchar(255);not null"`
+	Email            string    `json:"email"                         gorm:"uniqueIndex;not null"`
+	Password         string    `json:"-"                             gorm:"not null"`
+	Role             Role      `json:"role"                          gorm:"type:varchar(255);not null"`
+	VerificationCode string    `json:"verification_code,omitempty"`
+	Verified         bool      `json:"-"                             gorm:"not null"`
+	CreatedAt        time.Time `json:"-"                             gorm:"not null"`
+	UpdatedAt        time.Time `json:"-"                             gorm:"not null"`
 }
 
 type UserSignUp struct {
-	Name            string `json:"name" binding:"required"`
-	Email           string `json:"email" binding:"required"`
-	Password        string `json:"password" binding:"required,min=8"`
-	PasswordConfirm string `json:"passwordConfirm" binding:"required"`
+	Name            string `json:"name"             binding:"required"`
+	Email           string `json:"email"            binding:"required"`
+	Password        string `json:"password"         binding:"required,min=8"`
+	PasswordConfirm string `json:"password_confirm" binding:"required"`
 }
 
 type UserSignIn struct {
@@ -28,22 +30,22 @@ type UserSignIn struct {
 	Password string `json:"password"  binding:"required"`
 }
 
-type UserResponse struct {
-	ID        uuid.UUID `json:"id,omitempty"`
-	Name      string    `json:"name,omitempty"`
-	Email     string    `json:"email,omitempty"`
-	Role      string    `json:"role,omitempty"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
+func (u *User) Response() User {
 
-func (u *User) ToResponse() UserResponse {
-	return UserResponse{
-		ID:        u.ID,
-		Name:      u.Name,
-		Email:     u.Email,
-		Role:      u.Role.String(),
-		CreatedAt: u.CreatedAt,
-		UpdatedAt: u.UpdatedAt,
+	// User response for the client
+	user := User{
+		ID: u.ID,
+		//Name:  u.Name,
+		Email: u.Email,
+		Role:  u.Role,
 	}
+
+	// Add the verification code if the app is in debug mode
+	if config.Config.App.Debug {
+		if len(u.VerificationCode) > 0 {
+			user.VerificationCode = u.VerificationCode
+		}
+	}
+
+	return user
 }

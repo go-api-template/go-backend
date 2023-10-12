@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/go-api-template/go-backend/modules/config"
 	"github.com/go-api-template/go-backend/modules/middlewares"
@@ -32,7 +33,7 @@ func NewRouter() *gin.Engine {
 
 // initialize initializes the router
 func (r *router) initialize() {
-	log.Debug().Msg("Initializing router ...")
+	log.Debug().Msg("Initializing router...")
 
 	// Disable gin warning if not in debug mode
 	if !config.Config.App.Debug {
@@ -44,6 +45,7 @@ func (r *router) initialize() {
 
 	// Add static files
 	router.StaticFile("/favicon.ico", "./assets/favicon.ico")
+	router.Use(static.Serve("/", static.LocalFile("./assets", false)))
 
 	// Add default middleware
 	router.Use(gin.Recovery())

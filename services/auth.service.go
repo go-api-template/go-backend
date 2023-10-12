@@ -10,27 +10,29 @@ import (
 	"strings"
 )
 
-// IAuthService is the interface that the service must implement
+// AuthService is the interface that the service must implement
 // It declares the methods that the service must implement
-type IAuthService interface {
+type AuthService interface {
 	UserSignUp(user *models.UserSignUp) (*models.User, error)
 }
 
-// AuthService is the service for authentification
-// It implements the IAuthService interface
-type AuthService struct {
+// AuthServiceImpl is the service for authentification
+// It implements the AuthService interface
+type AuthServiceImpl struct {
 	ctx    context.Context
 	gormDb *gorm.DB
 }
 
-// AuthService implements the IAuthService interface
-var _ IAuthService = &AuthService{}
+// AuthServiceImpl implements the AuthService interface
+var _ AuthService = &AuthServiceImpl{}
 
-func NewAuthService(ctx context.Context, gormDb *gorm.DB) IAuthService {
-	return &AuthService{ctx: ctx, gormDb: gormDb}
+// NewAuthService creates a new service used for authentification
+func NewAuthService(ctx context.Context, gormDb *gorm.DB) AuthService {
+	return &AuthServiceImpl{ctx: ctx, gormDb: gormDb}
 }
 
-func (s *AuthService) UserSignUp(user *models.UserSignUp) (*models.User, error) {
+// UserSignUp creates a new user
+func (s *AuthServiceImpl) UserSignUp(user *models.UserSignUp) (*models.User, error) {
 
 	// Hash the password
 	hashedPassword, err := utils.HashPassword(user.Password)
@@ -40,7 +42,7 @@ func (s *AuthService) UserSignUp(user *models.UserSignUp) (*models.User, error) 
 
 	// Create a new user from the UserSignUp input
 	newUser := &models.User{
-		Name:     user.Name,
+		//Name:     user.Name,
 		Email:    strings.ToLower(user.Email),
 		Password: hashedPassword,
 		Role:     models.RoleUser,

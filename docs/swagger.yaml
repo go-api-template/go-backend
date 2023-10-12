@@ -21,7 +21,11 @@ definitions:
     type: object
   models.AccessToken:
     properties:
-      AccessToken:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      token_type:
         type: string
     type: object
   models.UserResponse:

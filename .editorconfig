@@ -10,5 +10,9 @@ insert_final_newline = true
 [{Makefile,go.mod,go.sum,*.go,.gitmodules}]
 indent_style = tab
 
+[*.gohtml]
+indent_style = tab
+indent_size = 2
+
 [*.md]
 trim_trailing_whitespace = false

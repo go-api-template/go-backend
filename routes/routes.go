@@ -38,6 +38,7 @@ func NewRoutes(gr *gin.Engine, c *controllers.Controllers) *Routes {
 
 func (r *Routes) initialize(c *controllers.Controllers) {
 	// Initialize routes
+	r.SwaggerRoutes = NewSwaggerRouteController(c.SwaggerController)
 	r.HealthRoutes = NewHealthRouteController(c.HealthController)
 	r.InfoRoute = NewStatusRouteController(c.StatusController)
 	r.AuthRoutes = NewAuthRoutesController(c.AuthController)

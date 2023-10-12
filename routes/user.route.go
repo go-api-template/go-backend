@@ -7,10 +7,10 @@ import (
 )
 
 type UserRoutesController struct {
-	userController controllers.IUserController
+	userController controllers.UserController
 }
 
-func NewUserRoutesController(userController controllers.IUserController) UserRoutesController {
+func NewUserRoutesController(userController controllers.UserController) UserRoutesController {
 	return UserRoutesController{userController}
 }
 

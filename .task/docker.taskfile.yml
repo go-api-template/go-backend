@@ -19,6 +19,10 @@ tasks:
         desc: "Start the docker services"
         cmds:
             - docker compose -f docker-compose.yml -f docker-compose.{{.SHORT_ENV_NAME}}.yml --project-name {{.PROJECT_NAME}} up -d
+            - echo "Api server http://localhost:{{.APP_PORT}}"
+            - echo "PgAdmin http://localhost:{{.PGADMIN_HTTP_PORT}}"
+            - echo "Mailhog http://localhost:{{.MAILHOG_HTTP_PORT}}"
+            - echo "Redis Stack http://localhost:{{.REDIS_HTTP_PORT}}"
         silent: true
 
     down:

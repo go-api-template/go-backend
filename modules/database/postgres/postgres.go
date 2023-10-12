@@ -36,7 +36,7 @@ func NewPostgres(ctx context.Context) (*gorm.DB, *sql.DB) {
 }
 
 func (p *postgresDb) initialize(ctx context.Context) {
-	log.Debug().Msg("Initializing Postgres ...")
+	log.Debug().Msg("Initializing Postgres...")
 
 	// Initialize gormDb
 	gormDb, err := gorm.Open(postgres.Open(config.Config.Database.ConnectionString), &gorm.Config{

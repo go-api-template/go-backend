@@ -11,8 +11,8 @@ vars:
         desc: "The first three characters of the APP_ENV variable, production becomes pro and development becomes dev."
         sh: echo '{{.APP_ENV}}' | cut -c1-3
     PROJECT_NAME:
-        desc: "The name of the project. If the APP_ENV is production, the PROJECT_NAME is the same as the APP_NAME. If the APP_ENV is development, the PROJECT_NAME is the APP_NAME with the SHORT_ENV_NAME appended to the end."
-        sh: echo '{{if eq .APP_ENV "production"}}{{.APP_NAME}}{{else}}{{.APP_NAME}}-{{.SHORT_ENV_NAME}}{{end}}'
+        desc: "The name of the project. If the APP_ENV is production, the PROJECT_NAME is the same as the PROJECT_NAME. If the APP_ENV is development, the PROJECT_NAME is the PROJECT_NAME with the SHORT_ENV_NAME appended to the end."
+        sh: echo '{{if eq .APP_ENV "production"}}{{.PROJECT_NAME}}{{else}}{{.PROJECT_NAME}}-{{.SHORT_ENV_NAME}}{{end}}'
     GIT_COMMIT:
         desc: "The git commit hash of the current commit."
         sh: git rev-parse --short HEAD
@@ -55,5 +55,5 @@ tasks:
     info:
         desc: "Display information about the project."
         cmds:
-            - echo "{{.APP_NAME}} ({{.VERSION}}) will be running in '{{.APP_ENV}}' mode."
+            - echo "{{.PROJECT_NAME}} ({{.VERSION}}) will be running in '{{.APP_ENV}}' mode."
         silent: true

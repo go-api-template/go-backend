@@ -6,45 +6,45 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-// IStatusService is the interface for status service
-// It declares the methods that the StatusService must implement
-type IStatusService interface {
+// StatusService is the interface for status service
+// It declares the methods that the StatusServiceImpl must implement
+type StatusService interface {
 	IsDbConnected() bool
 	GetDbConnectionStatus() string
 	IsRedisConnected() bool
 	GetRedisConnectionStatus() string
 }
 
-// StatusService is the service for status
-// It implements the IStatusService interface
-type StatusService struct {
+// StatusServiceImpl is the service for status
+// It implements the StatusService interface
+type StatusServiceImpl struct {
 	ctx   context.Context
 	sqlDb *sql.DB
 	redis *redis.Client
 }
 
-// StatusService implements the IStatusService interface
-var _ IStatusService = &StatusService{}
+// StatusServiceImpl implements the StatusService interface
+var _ StatusService = &StatusServiceImpl{}
 
-func NewInfoService(ctx context.Context, sqlDb *sql.DB, redis *redis.Client) IStatusService {
-	return &StatusService{ctx: ctx, sqlDb: sqlDb, redis: redis}
+func NewInfoService(ctx context.Context, sqlDb *sql.DB, redis *redis.Client) StatusService {
+	return &StatusServiceImpl{ctx: ctx, sqlDb: sqlDb, redis: redis}
 }
 
-func (s *StatusService) IsDbConnected() bool {
+func (s *StatusServiceImpl) IsDbConnected() bool {
 	if err := s.sqlDb.PingContext(s.ctx); err == nil {
 		return true
 	}
 	return false
 }
 
-func (s *StatusService) GetDbConnectionStatus() string {
+func (s *StatusServiceImpl) GetDbConnectionStatus() string {
 	if s.IsDbConnected() {
 		return "Connected"
 	}
 	return "Not connected"
 }
 
-func (s *StatusService) IsRedisConnected() bool {
+func (s *StatusServiceImpl) IsRedisConnected() bool {
 	if err := s.redis.Set(s.ctx, "redis", "Connected", 0).Err(); err == nil {
 		if _, err := s.redis.Get(s.ctx, "redis").Result(); err == nil {
 			s.redis.Del(s.ctx, "redis")
@@ -54,7 +54,7 @@ func (s *StatusService) IsRedisConnected() bool {
 	return false
 }
 
-func (s *StatusService) GetRedisConnectionStatus() string {
+func (s *StatusServiceImpl) GetRedisConnectionStatus() string {
 	if s.IsRedisConnected() {
 		return "Connected"
 	}

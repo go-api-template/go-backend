@@ -86,16 +86,18 @@ tasks:
         desc: "Build the go binary"
         cmds:
             - echo "Building..."
-            - go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.BUILD_FOLDER}}/{{.APP_NAME}}{{exeExt}}
+            - cp -rf templates -t {{.BUILD_FOLDER}}
+            - cp -rf assets -t {{.BUILD_FOLDER}}
+            - go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.BUILD_FOLDER}}/{{.PROJECT_NAME}}{{exeExt}}
         silent: true
 
     release:
         desc: "Build the go binary for release"
         cmds:
             - echo "Building release..."
-            - env GOOS=darwin GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_darwin_amd64.tar.gz {{.APP_NAME}}; rm -f {{.APP_NAME}}
-            - env GOOS=linux GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_linux_amd64.tar.gz {{.APP_NAME}}; rm -f {{.APP_NAME}}
-            - env GOOS=windows GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.APP_NAME}}{{exeExt}}; cd {{.RELEASE_FOLDER}}; tar czf {{.APP_NAME}}_windows_amd64.tar.gz {{.APP_NAME}}{{exeExt}}; rm -f {{.APP_NAME}}{{exeExt}}
+            - env GOOS=darwin GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.PROJECT_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.PROJECT_NAME}}_darwin_amd64.tar.gz {{.PROJECT_NAME}}; rm -f {{.PROJECT_NAME}}
+            - env GOOS=linux GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.PROJECT_NAME}}; cd {{.RELEASE_FOLDER}}; tar czf {{.PROJECT_NAME}}_linux_amd64.tar.gz {{.PROJECT_NAME}}; rm -f {{.PROJECT_NAME}}
+            - env GOOS=windows GOARCH=amd64 go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.RELEASE_FOLDER}}/{{.PROJECT_NAME}}{{exeExt}}; cd {{.RELEASE_FOLDER}}; tar czf {{.PROJECT_NAME}}_windows_amd64.tar.gz {{.PROJECT_NAME}}{{exeExt}}; rm -f {{.PROJECT_NAME}}{{exeExt}}
         silent: true
 
     clean:

@@ -4,6 +4,8 @@ import (
 	"github.com/go-api-template/go-backend/modules/config"
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
+
+	_ "github.com/go-api-template/go-backend/modules/logger/main"
 )
 
 // Options stores the options which are used in the command

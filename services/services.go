@@ -8,10 +8,14 @@ import (
 	"sync"
 )
 
+// Services struct holds all services.
+// All services should be declared here
+// and initialized in the initialize function.
 type Services struct {
-	StatusService IStatusService
-	AuthService   IAuthService
-	UserService   IUserService
+	StatusService StatusService
+	AuthService   AuthService
+	UserService   UserService
+	MailService   MailerService
 }
 
 var (
@@ -21,6 +25,7 @@ var (
 	once sync.Once
 )
 
+// NewServices returns the singleton instance of the Services struct.
 func NewServices(ctx context.Context, gorm *gorm.DB, sql *sql.DB, redis *redis.Client) *Services {
 	once.Do(func() {
 		s = &Services{}
@@ -29,8 +34,10 @@ func NewServices(ctx context.Context, gorm *gorm.DB, sql *sql.DB, redis *redis.C
 	return s
 }
 
+// initialize initializes all services.
 func (s *Services) initialize(ctx context.Context, gorm *gorm.DB, sql *sql.DB, redis *redis.Client) {
 	s.StatusService = NewInfoService(ctx, sql, redis)
 	s.AuthService = NewAuthService(ctx, gorm)
 	s.UserService = NewUserService(ctx, gorm)
+	s.MailService, _ = NewMailerService(ctx)
 }

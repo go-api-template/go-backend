@@ -8,18 +8,29 @@ import (
 	"github.com/go-api-template/go-backend/services"
 )
 
-type StatusController struct {
-	statusService services.IStatusService
+// StatusController is the controller for status
+// It declares the methods that the controller must implement
+type StatusController interface {
+	Status(ctx *gin.Context)
 }
 
-func NewStatusController(statusService services.IStatusService) StatusController {
-	return StatusController{statusService}
+// StatusControllerImpl is the controller for status
+// It implements the StatusController interface
+type StatusControllerImpl struct {
+	statusService services.StatusService
+}
+
+// StatusControllerImpl implements the StatusController interface
+var _ StatusController = &StatusControllerImpl{}
+
+func NewStatusController(statusService services.StatusService) StatusController {
+	return &StatusControllerImpl{statusService}
 }
 
 // StatusResponse is the struct for the response of the status endpoint
 // Create a response message giving information about the server
 // -> Welcome to go-api-template/go-backend
-// -> Server: version
+// -> Version: version
 // -> Database: Type and version
 // -> Redis: Type and version
 type StatusResponse struct {
@@ -29,7 +40,7 @@ type StatusResponse struct {
 	Redis    string `json:"redis"`
 }
 
-func (c *StatusController) Status(ctx *gin.Context) {
+func (c *StatusControllerImpl) Status(ctx *gin.Context) {
 
 	response := StatusResponse{
 		Welcome:  fmt.Sprintf("Welcome to to go-api-template/%s", config.Config.App.Name),

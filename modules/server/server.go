@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-api-template/go-backend/controllers"
 	"github.com/go-api-template/go-backend/modules/config"
@@ -12,7 +13,7 @@ import (
 	"github.com/go-api-template/go-backend/modules/router"
 	"github.com/go-api-template/go-backend/routes"
 	"github.com/go-api-template/go-backend/services"
-	redis "github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 	"net/http"
@@ -37,7 +38,7 @@ func (s *Server) Run() (err error) {
 	c := config.Config
 
 	// Log the server startup
-	log.Debug().Msgf("Running %s server", c.App.Name)
+	log.Info().Msgf("Initializing  %s server...", c.App.Name)
 
 	// Initialize the server
 	s.ctx = context.TODO()
@@ -57,7 +58,7 @@ func (s *Server) Run() (err error) {
 
 	// Server configuration
 	server := &http.Server{
-		Addr:              ":8080",
+		Addr:              fmt.Sprintf(":%s", c.Server.Port),
 		Handler:           s.router,
 		ReadTimeout:       1 * time.Second,
 		WriteTimeout:      1 * time.Second,

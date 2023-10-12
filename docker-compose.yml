@@ -2,8 +2,8 @@ services:
 
     # Postgres database
     database:
-        container_name: ${APP_NAME}-database
-        hostname: ${APP_NAME}-database
+        container_name: ${PROJECT_NAME}-database
+        hostname: ${PROJECT_NAME}-database
         image: postgres:16
         restart: always
         environment:
@@ -28,8 +28,8 @@ services:
 
     # Redis cache database
     redis:
-        container_name: ${APP_NAME}-redis
-        hostname: ${APP_NAME}-redis
+        container_name: ${PROJECT_NAME}-redis
+        hostname: ${PROJECT_NAME}-redis
         image: redis/redis-stack-server
         ports:
             - "${REDIS_PORT}:6379"
@@ -47,10 +47,10 @@ volumes:
 # Declare networks to attach
 networks:
     default:
-        name: ${APP_NAME}_default
+        name: ${PROJECT_NAME}_default
     database_network:
-        name: ${APP_NAME}-database-network
+        name: ${PROJECT_NAME}-database-network
         driver: bridge
     redis_network:
-        name: ${APP_NAME}-redis-network
+        name: ${PROJECT_NAME}-redis-network
         driver: bridge

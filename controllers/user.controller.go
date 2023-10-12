@@ -8,39 +8,40 @@ import (
 	"github.com/go-api-template/go-backend/services"
 )
 
-// IUserController is the controller for user
+// UserController is the controller for user
 // It declares the methods that the controller must implement
-type IUserController interface {
+type UserController interface {
 	GetMe(ctx *gin.Context)
 }
 
-// UserController is the controller for user
-// It implements the IUserController interface
-type UserController struct {
-	userService services.IUserService
+// UserControllerImpl is the controller for user
+// It implements the UserController interface
+type UserControllerImpl struct {
+	userService services.UserService
 }
 
-// UserController implements the IUserController interface
-var _ IUserController = &UserController{}
+// UserControllerImpl implements the UserController interface
+var _ UserController = &UserControllerImpl{}
 
-func NewUserController(userService services.IUserService) IUserController {
-	return &UserController{userService: userService}
+func NewUserController(userService services.UserService) UserController {
+	return &UserControllerImpl{userService: userService}
 }
 
 // GetMe godoc
 //
-//	@Summary		Get the current user
-//	@Description	Get the current user
-//	@Tags			user
-//	@Accept			json
-//	@Produce		json
-//	@Router			/users/me [get]
-func (u *UserController) GetMe(ctx *gin.Context) {
+// @Summary     Get the current user
+// @Description Get the current user
+// @Tags        user
+// @Accept      json
+// @Produce     json
+// @Router      /users/me [get]
+func (u *UserControllerImpl) GetMe(ctx *gin.Context) {
 	user := ctx.MustGet(middlewares.CtxUser).(*models.User)
 	if user == nil {
 		httputil.Ctx(ctx).BadRequest().ErrorMessage("cannot get user")
 		return
 	}
 
-	httputil.Ctx(ctx).Ok().Response(user.ToResponse())
+	// Send the response
+	httputil.Ctx(ctx).Ok().Response(user.Response())
 }

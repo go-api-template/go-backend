@@ -29,7 +29,7 @@ func NewRedis(ctx context.Context) *redis.Client {
 }
 
 func (r *redisDb) initialize(ctx context.Context) {
-	log.Debug().Msg("Initializing Redis ...")
+	log.Debug().Msg("Initializing Redis...")
 
 	// Initialize redisDb
 	rc := redis.NewClient(&redis.Options{

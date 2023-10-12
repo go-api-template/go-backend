@@ -12,8 +12,8 @@ type Controllers struct {
 	SwaggerController SwaggerController
 	StatusController  StatusController
 	HealthController  HealthController
-	AuthController    IAuthController
-	UserController    IUserController
+	AuthController    AuthController
+	UserController    UserController
 }
 
 var (
@@ -23,6 +23,7 @@ var (
 	once sync.Once
 )
 
+// NewControllers returns the singleton instance of the Controllers struct.
 func NewControllers(s *services.Services) *Controllers {
 	once.Do(func() {
 		c = &Controllers{}
@@ -31,11 +32,11 @@ func NewControllers(s *services.Services) *Controllers {
 	return c
 }
 
+// initialize initializes all controllers.
 func (c *Controllers) initialize(s *services.Services) {
-	// Initialize controllers
 	c.SwaggerController = NewSwaggerController()
 	c.StatusController = NewStatusController(s.StatusService)
 	c.HealthController = NewHealthController()
-	c.AuthController = NewAuthController(s.UserService)
+	c.AuthController = NewAuthController(s.UserService, s.MailService)
 	c.UserController = NewUserController(s.UserService)
 }

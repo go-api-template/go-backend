@@ -7,14 +7,24 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-type SwaggerController struct {
+// SwaggerController is the controller for swagger
+// It declares the methods that the controller must implement
+type SwaggerController interface {
+	Swagger() gin.HandlerFunc
 }
+
+// SwaggerControllerImpl is the controller for swagger
+// It implements the SwaggerController interface
+type SwaggerControllerImpl struct{}
+
+// SwaggerControllerImpl implements the SwaggerController interface
+var _ SwaggerController = &SwaggerControllerImpl{}
 
 func NewSwaggerController() SwaggerController {
-	return SwaggerController{}
+	return &SwaggerControllerImpl{}
 }
 
-func (c *SwaggerController) Swagger() gin.HandlerFunc {
+func (c *SwaggerControllerImpl) Swagger() gin.HandlerFunc {
 	config := func(config *ginSwagger.Config) {
 		config.Title = docs.SwaggerInfo.Title
 	}

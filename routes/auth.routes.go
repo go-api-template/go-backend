@@ -7,10 +7,10 @@ import (
 )
 
 type AuthRoutesController struct {
-	authController controllers.IAuthController
+	authController controllers.AuthController
 }
 
-func NewAuthRoutesController(authController controllers.IAuthController) AuthRoutesController {
+func NewAuthRoutesController(authController controllers.AuthController) AuthRoutesController {
 	return AuthRoutesController{authController}
 }
 
@@ -21,10 +21,10 @@ func (r *AuthRoutesController) NewRoutes(rg *gin.RouterGroup) {
 	publicRoutes.POST("/register", r.authController.UserSignUp)
 	publicRoutes.POST("/login", r.authController.UserSignIn)
 	publicRoutes.GET("/refresh", r.authController.RefreshAccessToken)
-	//publicRoutes.GET("/verify/:verification_code", r.authController.VerifyEmail)
-	//publicRoutes.POST("/password/forgot", r.authController.ForgotPassword)
-	//publicRoutes.PATCH("/password/reset/:reset_token", r.authController.ResetPassword)
-	//publicRoutes.POST("/welcome", r.authController.Welcome)
+	publicRoutes.GET("/verify/:verification_code", r.authController.VerifyEmail)
+	publicRoutes.POST("/password/forgot", r.authController.ForgotPassword)
+	publicRoutes.PATCH("/password/reset/:reset_token", r.authController.ResetPassword)
+	publicRoutes.POST("/welcome", r.authController.Welcome)
 
 	// Private auth routes
 	privateRoutes := rg.Group("/auth")

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-api-template/go-backend/controllers"
 	"github.com/go-api-template/go-backend/models"
 	"github.com/go-api-template/go-backend/modules/config"
 	"github.com/go-api-template/go-backend/modules/utils"
@@ -15,7 +14,7 @@ import (
 )
 
 type Authorizer struct {
-	userService services.IUserService
+	userService services.UserService
 }
 
 var (
@@ -24,7 +23,7 @@ var (
 )
 
 // InitializeAuthorizer initializes the authorizer
-func InitializeAuthorizer(userService services.IUserService) {
+func InitializeAuthorizer(userService services.UserService) {
 	authorizer = &Authorizer{userService}
 }
 
@@ -45,7 +44,7 @@ func (a Authorizer) contextUser(ctx *gin.Context) (*models.User, error) {
 
 	// Get the access token from the cookie
 	if accessToken == "" {
-		cookie, err := ctx.Cookie(controllers.CtxAccessToken)
+		cookie, err := ctx.Cookie("access_token")
 		if err == nil {
 			accessToken = cookie
 		}

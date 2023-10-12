@@ -3,8 +3,8 @@ services:
     # PgAdmin : https://www.pgadmin.org/
     # Used to manage the postgres database
     pgadmin:
-        container_name: ${APP_NAME}-pgadmin
-        hostname: ${APP_NAME}-database
+        container_name: ${PROJECT_NAME}-pgadmin
+        hostname: ${PROJECT_NAME}-database
         image: dpage/pgadmin4
         restart: always
         environment:
@@ -29,8 +29,8 @@ services:
     # Mailhog : https://github.com/mailhog/MailHog
     # Used to catch emails sent by the application
     mailhog:
-        container_name: ${APP_NAME}-mailhog
-        hostname: ${APP_NAME}-mailhog
+        container_name: ${PROJECT_NAME}-mailhog
+        hostname: ${PROJECT_NAME}-mailhog
         image: mailhog/mailhog
         restart: always
         ports:

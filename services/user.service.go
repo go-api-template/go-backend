@@ -11,29 +11,29 @@ import (
 	"strings"
 )
 
-// IUserService is an interface for the UserService
-// It declares the methods that the UserService must implement
-type IUserService interface {
+// UserService is an interface for the UserServiceImpl
+// It declares the methods that the UserServiceImpl must implement
+type UserService interface {
 	Create(user *models.UserSignUp) (*models.User, error)
 	FindById(id uuid.UUID) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
 }
 
-// UserService is the service for the user
-// It implements the IUserService interface
-type UserService struct {
+// UserServiceImpl is the service for the user
+// It implements the UserService interface
+type UserServiceImpl struct {
 	ctx    context.Context
 	gormDb *gorm.DB
 }
 
-// UserService implements the IUserService interface
-var _ IUserService = &UserService{}
+// UserServiceImpl implements the UserService interface
+var _ UserService = &UserServiceImpl{}
 
-func NewUserService(ctx context.Context, gormDb *gorm.DB) IUserService {
-	return &UserService{ctx: ctx, gormDb: gormDb}
+func NewUserService(ctx context.Context, gormDb *gorm.DB) UserService {
+	return &UserServiceImpl{ctx: ctx, gormDb: gormDb}
 }
 
-func (s *UserService) Create(user *models.UserSignUp) (*models.User, error) {
+func (s *UserServiceImpl) Create(user *models.UserSignUp) (*models.User, error) {
 
 	// Hash the password
 	hashedPassword, err := utils.HashPassword(user.Password)
@@ -41,13 +41,18 @@ func (s *UserService) Create(user *models.UserSignUp) (*models.User, error) {
 		return nil, err
 	}
 
+	// Verification code
+	verificationCode := utils.GenerateRandomString(32)
+	verificationCode = utils.Encode(verificationCode)
+
 	// Create a new user from the UserSignUp input
 	newUser := &models.User{
-		Name:     user.Name,
-		Email:    strings.ToLower(user.Email),
-		Password: hashedPassword,
-		Role:     models.RoleUser,
-		Verified: false,
+		//Name:             user.Name,
+		Email:            strings.ToLower(user.Email),
+		Password:         hashedPassword,
+		Role:             models.RoleUser,
+		VerificationCode: verificationCode,
+		Verified:         false,
 	}
 
 	// Add the new user to the database
@@ -62,7 +67,7 @@ func (s *UserService) Create(user *models.UserSignUp) (*models.User, error) {
 	return newUser, nil
 }
 
-func (s *UserService) FindById(id uuid.UUID) (*models.User, error) {
+func (s *UserServiceImpl) FindById(id uuid.UUID) (*models.User, error) {
 	var user models.User
 	result := s.gormDb.Find(&user, "id = ?", id)
 
@@ -75,7 +80,7 @@ func (s *UserService) FindById(id uuid.UUID) (*models.User, error) {
 	return nil, nil
 }
 
-func (s *UserService) FindByEmail(email string) (*models.User, error) {
+func (s *UserServiceImpl) FindByEmail(email string) (*models.User, error) {
 	var user models.User
 	result := s.gormDb.Find(&user, "email = ?", email)
 
