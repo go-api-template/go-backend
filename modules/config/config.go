@@ -257,16 +257,13 @@ func (c *AppConfig) setupServer() {
 	} else {
 		c.Server.Scheme = "https"
 	}
-	// Clean the base path
-	c.Server.BasePath = strings.Trim(c.Server.BasePath, " ")
-	c.Server.BasePath = strings.Trim(c.Server.BasePath, "/")
 	// Update server url
 	if len(c.Server.Url) == 0 {
 		c.Server.Url = fmt.Sprintf("%s://%s:%s", c.Server.Scheme, c.Server.Host, c.Server.Port)
-		if len(c.Server.BasePath) > 0 {
-			c.Server.Url = fmt.Sprintf("%s/%s", c.Server.Url, c.Server.BasePath)
-		}
 	}
+	// Clean the base path
+	c.Server.BasePath = strings.Trim(c.Server.BasePath, " ")
+	c.Server.BasePath = strings.Trim(c.Server.BasePath, "/")
 }
 
 // setupTokens updates the token config

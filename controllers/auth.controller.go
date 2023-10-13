@@ -92,7 +92,7 @@ func (c *AuthControllerImpl) SignUp(ctx *gin.Context) {
 
 	// Send verification code to user email address in background
 	go func() {
-		if err := c.mailerService.SendVerificationCode(user); err != nil {
+		if err := c.mailerService.SendVerificationToken(user); err != nil {
 			log.Error().Err(err).Msg("Failed to send verification code")
 		}
 	}()
@@ -253,8 +253,8 @@ func (c *AuthControllerImpl) Welcome(ctx *gin.Context) {
 
 	// Send verification code to user email address in background
 	go func() {
-		if err := c.mailerService.SendVerificationCode(user); err != nil {
-			log.Error().Err(err).Msg("Failed to send verification code")
+		if err := c.mailerService.SendVerificationToken(user); err != nil {
+			log.Error().Err(err).Msg("Failed to send the verification token")
 		}
 	}()
 
@@ -408,13 +408,12 @@ func (c *AuthControllerImpl) ForgotPassword(ctx *gin.Context) {
 		return
 	}
 
-	// todo : reset mail
-	//// Send reset token to user email address in background
-	//go func() {
-	//	if err := c.mailService.SendResetToken(user, resetToken); err != nil {
-	//		log.Error().Err(err).Msg("Failed to send reset token")
-	//	}
-	//}()
+	// Send verification code to user email address in background
+	go func() {
+		if err := c.mailerService.SendResetToken(user); err != nil {
+			log.Error().Err(err).Msg("Failed to send the reset token")
+		}
+	}()
 
 	// Send the response
 	httputil.Ctx(ctx).Created().Response(user.Response())
