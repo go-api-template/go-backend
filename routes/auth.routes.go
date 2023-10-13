@@ -15,21 +15,18 @@ func NewAuthRoutesController(authController controllers.AuthController) AuthRout
 }
 
 func (r *AuthRoutesController) NewRoutes(rg *gin.RouterGroup) {
+	auth := rg.Group("/auth")
+	auth.POST("/signup", r.authController.SignUp)
+	auth.POST("/signin", r.authController.SignIn)
+	auth.POST("/welcome/:email", r.authController.Welcome)
+	auth.GET("/verify/:token", r.authController.VerifyEmail)
+	auth.GET("/refresh", r.authController.RefreshTokens)
+	auth.POST("/forgot-password/:email", r.authController.ForgotPassword)
+	auth.PATCH("/reset-password/:token", r.authController.ResetPassword)
 
-	// Public auth routes
-	publicRoutes := rg.Group("/auth")
-	publicRoutes.POST("/register", r.authController.UserSignUp)
-	publicRoutes.GET("/welcome/:email", r.authController.Welcome)
-	publicRoutes.GET("/verify/:verification_code", r.authController.VerifyEmail)
-	publicRoutes.POST("/login", r.authController.UserSignIn)
-	publicRoutes.GET("/refresh", r.authController.RefreshAccessToken)
-	publicRoutes.GET("/password/forgot/:email", r.authController.ForgotPassword)
-	publicRoutes.PATCH("/password/reset/:reset_token", r.authController.ResetPassword)
-
-	// Private auth routes
-	privateRoutes := rg.Group("/auth")
-	privateRoutes.Use(middlewares.ContextUser())
-	privateRoutes.Use(middlewares.VerifiedUser())
-	privateRoutes.GET("/logout", r.authController.UserSignOut)
-	privateRoutes.PATCH("/password/change", r.authController.ChangePassword)
+	authSecured := auth.Group("").
+		Use(middlewares.ContextUser()).
+		Use(middlewares.VerifiedUser())
+	authSecured.GET("/signout", r.authController.SignOut)
+	authSecured.POST("/change-password", r.authController.ChangePassword)
 }

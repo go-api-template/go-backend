@@ -49,13 +49,10 @@ func (m *Mailer) Start() {
 	}
 	// start the goroutine which listens to the mail channel
 	go func() {
-		for {
-			select {
-			case message := <-m.mailChannel:
-				m.sendMail(message)
-				if len(m.mailChannel) == 0 {
-					m.isRunning = false
-				}
+		for message := range m.mailChannel {
+			m.sendMail(message)
+			if len(m.mailChannel) == 0 {
+				m.isRunning = false
 			}
 		}
 	}()

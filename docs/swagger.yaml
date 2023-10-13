@@ -39,16 +39,14 @@ definitions:
   models.User:
     properties:
       email:
-        description: Name             string    `json:"name"                          gorm:"type:varchar(255);not
-          null"`
         type: string
       id:
         type: string
-      reset_password_token:
+      reset_token:
         type: string
       role:
         $ref: '#/definitions/models.Role'
-      verification_code:
+      verification_token:
         type: string
     type: object
   models.UserPasswordConfirmation:
@@ -92,8 +90,8 @@ definitions:
 info:
   contact: {}
 paths:
-  /auth/password/change:
-    patch:
+  /auth/change-password:
+    post:
       consumes:
       - application/json
       description: Change the user password
@@ -134,8 +132,8 @@ paths:
       summary: Change the user password
       tags:
       - auth
-  /auth/password/forgot/{email}:
-    get:
+  /auth/forgot-password/{email}:
+    post:
       consumes:
       - application/json
       description: Send a reset token by email
@@ -149,8 +147,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/httputil.Message'
         "400":
@@ -164,7 +162,34 @@ paths:
       summary: Send a reset token by email
       tags:
       - auth
-  /auth/password/reset/{reset_token}:
+  /auth/refresh:
+    get:
+      consumes:
+      - application/json
+      description: Refresh the access token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AccessToken'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Refresh the access token
+      tags:
+      - auth
+  /auth/reset-password/{token}:
     patch:
       consumes:
       - application/json
@@ -206,33 +231,6 @@ paths:
       summary: Reset the user password
       tags:
       - auth
-  /auth/refresh:
-    get:
-      consumes:
-      - application/json
-      description: Refresh the access token
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.AccessToken'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/httputil.Error'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/httputil.Error'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/httputil.Error'
-      summary: Refresh the access token
-      tags:
-      - auth
   /auth/signin:
     post:
       consumes:
@@ -248,8 +246,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/models.AccessToken'
         "400":
@@ -282,7 +280,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Sign up a new user
+      description: Create a new user
       parameters:
       - description: User sign up
         in: body
@@ -313,10 +311,10 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/httputil.Error'
-      summary: Sign up a new user
+      summary: Create a new user
       tags:
       - auth
-  /auth/verify/{verification_code}:
+  /auth/verify/{token}:
     get:
       consumes:
       - application/json
@@ -324,7 +322,7 @@ paths:
       parameters:
       - description: verification code sent by email
         in: path
-        name: verification_code
+        name: token
         required: true
         type: string
       produces:
@@ -346,7 +344,7 @@ paths:
       tags:
       - auth
   /auth/welcome/{email}:
-    get:
+    post:
       consumes:
       - application/json
       description: This re-sends the welcome email to the user if the user is not
@@ -361,8 +359,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/models.User'
         "400":

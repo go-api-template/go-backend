@@ -44,7 +44,7 @@ func (f Default) fillStruct(s reflect.Value) error {
 				if err != nil {
 					return fmt.Errorf("default: cannot set `%v` field; err: %v", s.Type().Field(i).Name, err)
 				}
-
+				// #nosec G103
 				ptr := reflect.NewAt(s.Field(i).Type(), unsafe.Pointer(s.Field(i).UnsafeAddr())).Elem()
 				ptr.Set(reflect.ValueOf(d))
 			} else {
@@ -52,7 +52,7 @@ func (f Default) fillStruct(s reflect.Value) error {
 				if err != nil {
 					return fmt.Errorf("default: cannot set `%v` field; err: %v", s.Type().Field(i).Name, err)
 				}
-
+				// #nosec G103
 				ptr := reflect.NewAt(s.Field(i).Type(), unsafe.Pointer(s.Field(i).UnsafeAddr())).Elem()
 				ptr.Set(reflect.ValueOf(v))
 			}

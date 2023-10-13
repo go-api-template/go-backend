@@ -8,18 +8,17 @@ import (
 )
 
 type User struct {
-	ID uuid.UUID `json:"id"                                                  gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	//Name             string    `json:"name"                          gorm:"type:varchar(255);not null"`
-	Email              string         `json:"email"                          gorm:"uniqueIndex;not null"`
-	Password           string         `json:"-"                              gorm:"not null"`
-	Role               Role           `json:"role"                           gorm:"type:varchar(255);not null"`
-	Verified           bool           `json:"-"                              gorm:"not null"`
-	VerificationCode   string         `json:"verification_code,omitempty"`
-	ResetPasswordToken string         `json:"reset_password_token,omitempty"`
-	ResetPasswordAt    time.Time      `json:"-"`
-	CreatedAt          time.Time      `json:"-"                              gorm:"not null"`
-	UpdatedAt          time.Time      `json:"-"                              gorm:"not null"`
-	DeletedAt          gorm.DeletedAt `json:"-"                              gorm:"index"`
+	ID                uuid.UUID      `json:"id"                             gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+	Email             string         `json:"email"                          gorm:"uniqueIndex;not null"`
+	Password          string         `json:"-"                              gorm:"not null"`
+	Role              Role           `json:"role"                           gorm:"type:varchar(255);not null"`
+	Verified          bool           `json:"-"                              gorm:"not null"`
+	VerificationToken string         `json:"verification_token,omitempty"`
+	ResetToken        string         `json:"reset_token,omitempty"`
+	CreatedAt         time.Time      `json:"-"                              gorm:"not null"`
+	UpdatedAt         time.Time      `json:"-"                              gorm:"not null"`
+	ResetedAt         time.Time      `json:"-"`
+	DeletedAt         gorm.DeletedAt `json:"-"                              gorm:"index"`
 }
 
 type UserSignUp struct {
@@ -43,19 +42,18 @@ func (u *User) Response() User {
 
 	// User response for the client
 	user := User{
-		ID: u.ID,
-		//Name:  u.Name,
+		ID:    u.ID,
 		Email: u.Email,
 		Role:  u.Role,
 	}
 
 	// Add the verification code if the app is in debug mode
 	if config.Config.App.Debug {
-		if len(u.VerificationCode) > 0 {
-			user.VerificationCode = u.VerificationCode
+		if len(u.VerificationToken) > 0 {
+			user.VerificationToken = u.VerificationToken
 		}
-		if len(u.ResetPasswordToken) > 0 {
-			user.ResetPasswordToken = u.ResetPasswordToken
+		if len(u.ResetToken) > 0 {
+			user.ResetToken = u.ResetToken
 		}
 	}
 

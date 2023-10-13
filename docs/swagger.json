@@ -4,8 +4,8 @@
         "contact": {}
     },
     "paths": {
-        "/auth/password/change": {
-            "patch": {
+        "/auth/change-password": {
+            "post": {
                 "description": "Change the user password",
                 "consumes": [
                     "application/json"
@@ -68,8 +68,8 @@
                 }
             }
         },
-        "/auth/password/forgot/{email}": {
-            "get": {
+        "/auth/forgot-password/{email}": {
+            "post": {
                 "description": "Send a reset token by email",
                 "consumes": [
                     "application/json"
@@ -92,8 +92,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/httputil.Message"
                         }
@@ -113,7 +113,48 @@
                 }
             }
         },
-        "/auth/password/reset/{reset_token}": {
+        "/auth/refresh": {
+            "get": {
+                "description": "Refresh the access token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh the access token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AccessToken"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/reset-password/{token}": {
             "patch": {
                 "description": "Reset the user password",
                 "consumes": [
@@ -177,47 +218,6 @@
                 }
             }
         },
-        "/auth/refresh": {
-            "get": {
-                "description": "Refresh the access token",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Refresh the access token",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.AccessToken"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.Error"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.Error"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.Error"
-                        }
-                    }
-                }
-            }
-        },
         "/auth/signin": {
             "post": {
                 "description": "Sign in a user",
@@ -243,8 +243,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.AccessToken"
                         }
@@ -289,7 +289,7 @@
         },
         "/auth/signup": {
             "post": {
-                "description": "Sign up a new user",
+                "description": "Create a new user",
                 "consumes": [
                     "application/json"
                 ],
@@ -299,7 +299,7 @@
                 "tags": [
                     "auth"
                 ],
-                "summary": "Sign up a new user",
+                "summary": "Create a new user",
                 "parameters": [
                     {
                         "description": "User sign up",
@@ -345,7 +345,7 @@
                 }
             }
         },
-        "/auth/verify/{verification_code}": {
+        "/auth/verify/{token}": {
             "get": {
                 "description": "Verify email address from verification code sent by email",
                 "consumes": [
@@ -362,7 +362,7 @@
                     {
                         "type": "string",
                         "description": "verification code sent by email",
-                        "name": "verification_code",
+                        "name": "token",
                         "in": "path",
                         "required": true
                     }
@@ -390,7 +390,7 @@
             }
         },
         "/auth/welcome/{email}": {
-            "get": {
+            "post": {
                 "description": "This re-sends the welcome email to the user if the user is not verified",
                 "consumes": [
                     "application/json"
@@ -413,8 +413,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.User"
                         }
@@ -515,19 +515,18 @@
             "type": "object",
             "properties": {
                 "email": {
-                    "description": "Name             string    `json:\"name\"                          gorm:\"type:varchar(255);not null\"`",
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "reset_password_token": {
+                "reset_token": {
                     "type": "string"
                 },
                 "role": {
                     "$ref": "#/definitions/models.Role"
                 },
-                "verification_code": {
+                "verification_token": {
                     "type": "string"
                 }
             }
