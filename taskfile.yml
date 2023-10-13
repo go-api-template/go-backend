@@ -2,8 +2,8 @@
 # For more information about Task, see https://taskfile.dev/#/usage?id=usage
 version: '3'
 
-# Import environment variables from app.env
-dotenv: ['app.dev.env', 'app.env']
+# Import environment variables from app.env files
+dotenv: ['app.dev.env', 'app.sta.env', 'app.env']
 
 # Define variables to use in tasks
 vars:
@@ -41,6 +41,9 @@ vars:
         desc: "The folder where the release is happening. Current folder/release"
         sh: echo "dist"
 
+#env:
+#    PROJECT_NAME:
+#        sh: echo '{{if eq .APP_ENV "production"}}{{.PROJECT_NAME}}{{else}}{{.PROJECT_NAME}}-{{.SHORT_ENV_NAME}}{{end}}'
 
 # Import tasks from other files
 includes:
@@ -55,5 +58,7 @@ tasks:
     info:
         desc: "Display information about the project."
         cmds:
-            - echo "{{.PROJECT_NAME}} ({{.VERSION}}) will be running in '{{.APP_ENV}}' mode."
+            - echo "{{.PROJECT_NAME}}"
+            - echo "{{.APP_ENV}}"
+            - echo "{{.PROJECT_NAME}}({{.VERSION}}) will be running in '{{.APP_ENV}}' mode."
         silent: true

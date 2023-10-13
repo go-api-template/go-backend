@@ -12,10 +12,9 @@ import (
 // All services should be declared here
 // and initialized in the initialize function.
 type Services struct {
-	StatusService StatusService
-	AuthService   AuthService
-	UserService   UserService
-	MailService   MailerService
+	MailService MailerService
+	AuthService AuthService
+	UserService UserService
 }
 
 var (
@@ -36,8 +35,7 @@ func NewServices(ctx context.Context, gorm *gorm.DB, sql *sql.DB, redis *redis.C
 
 // initialize initializes all services.
 func (s *Services) initialize(ctx context.Context, gorm *gorm.DB, sql *sql.DB, redis *redis.Client) {
-	s.StatusService = NewInfoService(ctx, sql, redis)
+	s.MailService, _ = NewMailerService(ctx)
 	s.AuthService = NewAuthService(ctx, gorm)
 	s.UserService = NewUserService(ctx, gorm)
-	s.MailService, _ = NewMailerService(ctx)
 }

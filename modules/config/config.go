@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"net/mail"
+	"strings"
 	"time"
 )
 
@@ -26,7 +27,7 @@ type AppConfig struct {
 	// todo : add more comments
 	App struct {
 		Name          string `env:"APP_NAME" validate:"required"`
-		env           string `env:"APP_ENV" default:"production" validate:"required,oneof=production development staging"`
+		env           string `env:"APP_ENV" default:"production" validate:"required,oneof=production staging development"`
 		Environnement Environnement
 		Debug         bool `env:"APP_DEBUG" default:"false"`
 		Version       string
@@ -123,10 +124,11 @@ type AppConfig struct {
 	}
 
 	Server struct {
-		Scheme string
-		Host   string `env:"APP_HOST" validate:"required"`
-		Port   string `env:"APP_PORT" default:"8080" validate:"required"`
-		Url    string
+		Scheme   string
+		Host     string `env:"APP_HOST" validate:"required"`
+		Port     string `env:"APP_PORT" default:"8080" validate:"required"`
+		BasePath string `env:"APP_BASE_PATH" default:"/api" validate:"required"`
+		Url      string
 	}
 
 	Client struct {
@@ -255,9 +257,15 @@ func (c *AppConfig) setupServer() {
 	} else {
 		c.Server.Scheme = "https"
 	}
+	// Clean the base path
+	c.Server.BasePath = strings.Trim(c.Server.BasePath, " ")
+	c.Server.BasePath = strings.Trim(c.Server.BasePath, "/")
 	// Update server url
 	if len(c.Server.Url) == 0 {
 		c.Server.Url = fmt.Sprintf("%s://%s:%s", c.Server.Scheme, c.Server.Host, c.Server.Port)
+		if len(c.Server.BasePath) > 0 {
+			c.Server.Url = fmt.Sprintf("%s/%s", c.Server.Url, c.Server.BasePath)
+		}
 	}
 }
 

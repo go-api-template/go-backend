@@ -28,20 +28,39 @@ definitions:
       token_type:
         type: string
     type: object
-  models.UserResponse:
+  models.Role:
+    enum:
+    - admin
+    - user
+    type: string
+    x-enum-varnames:
+    - RoleAdmin
+    - RoleUser
+  models.User:
     properties:
-      created_at:
-        type: string
       email:
+        description: Name             string    `json:"name"                          gorm:"type:varchar(255);not
+          null"`
         type: string
       id:
         type: string
-      name:
+      reset_password_token:
         type: string
       role:
+        $ref: '#/definitions/models.Role'
+      verification_code:
         type: string
-      updated_at:
+    type: object
+  models.UserPasswordConfirmation:
+    properties:
+      password:
+        minLength: 8
         type: string
+      password_confirm:
+        type: string
+    required:
+    - password
+    - password_confirm
     type: object
   models.UserSignIn:
     properties:
@@ -62,17 +81,131 @@ definitions:
       password:
         minLength: 8
         type: string
-      passwordConfirm:
+      password_confirm:
         type: string
     required:
     - email
     - name
     - password
-    - passwordConfirm
+    - password_confirm
     type: object
 info:
   contact: {}
 paths:
+  /auth/password/change:
+    patch:
+      consumes:
+      - application/json
+      description: Change the user password
+      parameters:
+      - description: New password
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserPasswordConfirmation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httputil.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "412":
+          description: Precondition Failed
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Change the user password
+      tags:
+      - auth
+  /auth/password/forgot/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Send a reset token by email
+      parameters:
+      - description: User email
+        format: email
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httputil.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Send a reset token by email
+      tags:
+      - auth
+  /auth/password/reset/{reset_token}:
+    patch:
+      consumes:
+      - application/json
+      description: Reset the user password
+      parameters:
+      - description: New password
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserPasswordConfirmation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httputil.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "412":
+          description: Precondition Failed
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Reset the user password
+      tags:
+      - auth
   /auth/refresh:
     get:
       consumes:
@@ -163,7 +296,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.UserResponse'
+            $ref: '#/definitions/models.User'
         "400":
           description: Bad Request
           schema:
@@ -181,6 +314,70 @@ paths:
           schema:
             $ref: '#/definitions/httputil.Error'
       summary: Sign up a new user
+      tags:
+      - auth
+  /auth/verify/{verification_code}:
+    get:
+      consumes:
+      - application/json
+      description: Verify email address from verification code sent by email
+      parameters:
+      - description: verification code sent by email
+        in: path
+        name: verification_code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httputil.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Verify email address
+      tags:
+      - auth
+  /auth/welcome/{email}:
+    get:
+      consumes:
+      - application/json
+      description: This re-sends the welcome email to the user if the user is not
+        verified
+      parameters:
+      - description: User email
+        format: email
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Send welcome email
       tags:
       - auth
   /users/me:

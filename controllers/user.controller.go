@@ -29,12 +29,12 @@ func NewUserController(userService services.UserService) UserController {
 
 // GetMe godoc
 //
-// @Summary     Get the current user
-// @Description Get the current user
-// @Tags        user
-// @Accept      json
-// @Produce     json
-// @Router      /users/me [get]
+//	@Summary		Get the current user
+//	@Description	Get the current user
+//	@Tags			user
+//	@Accept			json
+//	@Produce		json
+//	@Router			/users/me [get]
 func (u *UserControllerImpl) GetMe(ctx *gin.Context) {
 	user := ctx.MustGet(middlewares.CtxUser).(*models.User)
 	if user == nil {

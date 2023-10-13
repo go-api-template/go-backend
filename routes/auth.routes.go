@@ -19,17 +19,17 @@ func (r *AuthRoutesController) NewRoutes(rg *gin.RouterGroup) {
 	// Public auth routes
 	publicRoutes := rg.Group("/auth")
 	publicRoutes.POST("/register", r.authController.UserSignUp)
+	publicRoutes.GET("/welcome/:email", r.authController.Welcome)
+	publicRoutes.GET("/verify/:verification_code", r.authController.VerifyEmail)
 	publicRoutes.POST("/login", r.authController.UserSignIn)
 	publicRoutes.GET("/refresh", r.authController.RefreshAccessToken)
-	publicRoutes.GET("/verify/:verification_code", r.authController.VerifyEmail)
-	publicRoutes.POST("/password/forgot", r.authController.ForgotPassword)
+	publicRoutes.GET("/password/forgot/:email", r.authController.ForgotPassword)
 	publicRoutes.PATCH("/password/reset/:reset_token", r.authController.ResetPassword)
-	publicRoutes.POST("/welcome", r.authController.Welcome)
 
 	// Private auth routes
 	privateRoutes := rg.Group("/auth")
 	privateRoutes.Use(middlewares.ContextUser())
-	//privateRoutes.Use(middlewares.VerifiedUser(userService))
+	privateRoutes.Use(middlewares.VerifiedUser())
 	privateRoutes.GET("/logout", r.authController.UserSignOut)
-	//privateRoutes.PATCH("/password/change", r.authController.ChangePassword)
+	privateRoutes.PATCH("/password/change", r.authController.ChangePassword)
 }

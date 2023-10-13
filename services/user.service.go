@@ -17,6 +17,9 @@ type UserService interface {
 	Create(user *models.UserSignUp) (*models.User, error)
 	FindById(id uuid.UUID) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
+	FindByVerificationCode(verificationCode string) (*models.User, error)
+
+	Update(id uuid.UUID, user *models.User) (*models.User, error)
 }
 
 // UserServiceImpl is the service for the user
@@ -45,7 +48,7 @@ func (s *UserServiceImpl) Create(user *models.UserSignUp) (*models.User, error) 
 	verificationCode := utils.GenerateRandomString(32)
 	verificationCode = utils.Encode(verificationCode)
 
-	// Create a new user from the UserSignUp input
+	// Create a new user from the SignUp input
 	newUser := &models.User{
 		//Name:             user.Name,
 		Email:            strings.ToLower(user.Email),
@@ -89,6 +92,42 @@ func (s *UserServiceImpl) FindByEmail(email string) (*models.User, error) {
 	}
 	if result.RowsAffected > 0 {
 		return &user, nil
+	}
+	return nil, nil
+}
+
+func (s *UserServiceImpl) FindByVerificationCode(verificationCode string) (*models.User, error) {
+	var user models.User
+	result := s.gormDb.Find(&user, "verification_code = ?", verificationCode)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected > 0 {
+		return &user, nil
+	}
+	return nil, nil
+}
+
+func (s *UserServiceImpl) Update(id uuid.UUID, user *models.User) (*models.User, error) {
+	// Set the verification code if the user is not verified yet and the verification code is empty
+	if !user.Verified && user.VerificationCode == "" {
+		user.VerificationCode = utils.Encode(utils.GenerateRandomString(32))
+	}
+	// Remove the verification code if the user is verified and the verification code is not empty
+	if user.Verified && user.VerificationCode != "" {
+		user.VerificationCode = ""
+	}
+
+	// Update the user
+	// Use select("*") to update all fields, even if they are empty
+	// this prevent zero value fields from being updated
+	result := s.gormDb.Model(user).Select("*").Updates(user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected > 0 {
+		return s.FindById(id)
 	}
 	return nil, nil
 }

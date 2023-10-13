@@ -13,7 +13,7 @@ import (
 // AuthService is the interface that the service must implement
 // It declares the methods that the service must implement
 type AuthService interface {
-	UserSignUp(user *models.UserSignUp) (*models.User, error)
+	SignUp(user *models.UserSignUp) (*models.User, error)
 }
 
 // AuthServiceImpl is the service for authentification
@@ -31,8 +31,8 @@ func NewAuthService(ctx context.Context, gormDb *gorm.DB) AuthService {
 	return &AuthServiceImpl{ctx: ctx, gormDb: gormDb}
 }
 
-// UserSignUp creates a new user
-func (s *AuthServiceImpl) UserSignUp(user *models.UserSignUp) (*models.User, error) {
+// SignUp creates a new user
+func (s *AuthServiceImpl) SignUp(user *models.UserSignUp) (*models.User, error) {
 
 	// Hash the password
 	hashedPassword, err := utils.HashPassword(user.Password)
@@ -40,7 +40,7 @@ func (s *AuthServiceImpl) UserSignUp(user *models.UserSignUp) (*models.User, err
 		return nil, err
 	}
 
-	// Create a new user from the UserSignUp input
+	// Create a new user from the SignUp input
 	newUser := &models.User{
 		//Name:     user.Name,
 		Email:    strings.ToLower(user.Email),

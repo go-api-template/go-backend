@@ -38,7 +38,7 @@ func (s *Server) Run() (err error) {
 	c := config.Config
 
 	// Log the server startup
-	log.Info().Msgf("Initializing  %s server...", c.App.Name)
+	log.Info().Msgf("Initializing %s server...", c.App.Name)
 
 	// Initialize the server
 	s.ctx = context.TODO()
@@ -67,8 +67,11 @@ func (s *Server) Run() (err error) {
 	}
 
 	log.Info().
+		Str("scheme", c.Server.Scheme).
 		Str("host", c.Server.Host).
 		Str("port", c.Server.Port).
+		Str("base", c.Server.BasePath).
+		Str("version", c.App.Version).
 		Msgf("Starting %s Server", c.App.Name)
 
 	if err = server.ListenAndServe(); err != nil {

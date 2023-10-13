@@ -92,3 +92,41 @@ func ContextUser() gin.HandlerFunc {
 		ctx.Next()
 	}
 }
+
+// GetUserFromContext extracts the user from the context
+func GetUserFromContext(ctx *gin.Context) (*models.User, error) {
+	// Get the user from the context
+	user, ok := ctx.Get(CtxUser)
+	if !ok || user == nil {
+		return nil, errors.New("user not found in context")
+	}
+
+	// Cast to User model
+	if _, ok := user.(*models.User); !ok {
+		return nil, errors.New("user not found in context")
+	}
+
+	return user.(*models.User), nil
+}
+
+// VerifiedUser checks if the user is verified
+func VerifiedUser() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		// Get the user from the context
+		user, err := authorizer.contextUser(ctx)
+		if err != nil {
+			httputil.Ctx(ctx).Unauthorized().Message(err.Error())
+			ctx.Abort()
+			return
+		}
+
+		// Check if the user is verified
+		if !user.Verified {
+			httputil.Ctx(ctx).Unauthorized().Message("Your account is not verified")
+			ctx.Abort()
+			return
+		}
+
+		ctx.Next()
+	}
+}
