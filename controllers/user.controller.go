@@ -42,9 +42,9 @@ func NewUserController(userService services.UserService) UserController {
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Success		200		{object}	models.User
-//	@Failure		400		{object}	httputil.Error
-//	@Failure		500		{object}	httputil.Error
+//	@Success		200	{object}	models.User
+//	@Failure		400	{object}	httputil.Error
+//	@Failure		500	{object}	httputil.Error
 //	@Router			/users/me [get]
 func (c *UserControllerImpl) GetMe(ctx *gin.Context) {
 	// Get the user from the context
@@ -131,9 +131,9 @@ func (c *UserControllerImpl) UpdateMe(ctx *gin.Context) {
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Success		204		{object}	httputil.Message
-//	@Failure		400		{object}	httputil.Error
-//	@Failure		500		{object}	httputil.Error
+//	@Success		204	{object}	httputil.Message
+//	@Failure		400	{object}	httputil.Error
+//	@Failure		500	{object}	httputil.Error
 //	@Router			/user/me [delete]
 func (c *UserControllerImpl) DeleteMe(ctx *gin.Context) {
 	// Get the user from the context
@@ -160,11 +160,11 @@ func (c *UserControllerImpl) DeleteMe(ctx *gin.Context) {
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Param			page	query	int	false	"Page number"
-//	@Param			limit	query	int	false	"Number of items per page"
-//	@Param			sort	query	string	false	"Sort by field"
-//	@Param			order	query	string	false	"Sort order (asc or desc)"
-//	@Param			search	query	string	false	"Search string"
+//	@Param			page	query		int		false	"Page number"
+//	@Param			limit	query		int		false	"Number of items per page"
+//	@Param			sort	query		string	false	"Sort by field"
+//	@Param			order	query		string	false	"Sort order (asc or desc)"
+//	@Param			search	query		string	false	"Search string"
 //	@Success		200		{object}	[]models.User
 //	@Failure		400		{object}	httputil.Error
 //	@Failure		500		{object}	httputil.Error
@@ -191,11 +191,11 @@ func (c *UserControllerImpl) FindAll(ctx *gin.Context) {
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path	string	true	"User id"
-//	@Success		200		{object}	models.User
-//	@Failure		400		{object}	httputil.Error
-//	@Failure		404		{object}	httputil.Message
-//	@Failure		500		{object}	httputil.Error
+//	@Param			id	path		string	true	"User id"
+//	@Success		200	{object}	models.User
+//	@Failure		400	{object}	httputil.Error
+//	@Failure		404	{object}	httputil.Message
+//	@Failure		500	{object}	httputil.Error
 //	@Router			/users/{id} [get]
 func (c *UserControllerImpl) FindById(ctx *gin.Context) {
 	// Get the user id
@@ -229,7 +229,7 @@ func (c *UserControllerImpl) FindById(ctx *gin.Context) {
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path	string	true	"User id"
+//	@Param			id		path		string	true	"User id"
 //	@Param			user	body		models.User
 //	@Success		200		{object}	models.User
 //	@Failure		400		{object}	httputil.Error
@@ -298,11 +298,11 @@ func (c *UserControllerImpl) Update(ctx *gin.Context) {
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path	string	true	"User id"
-//	@Success		204		{object}	httputil.Message
-//	@Failure		400		{object}	httputil.Error
-//	@Failure		404		{object}	httputil.Message
-//	@Failure		500		{object}	httputil.Error
+//	@Param			id	path		string	true	"User id"
+//	@Success		204	{object}	httputil.Message
+//	@Failure		400	{object}	httputil.Error
+//	@Failure		404	{object}	httputil.Message
+//	@Failure		500	{object}	httputil.Error
 //	@Router			/users/{id} [delete]
 func (c *UserControllerImpl) Delete(ctx *gin.Context) {
 	// Get the user id

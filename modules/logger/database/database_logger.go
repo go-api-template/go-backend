@@ -2,8 +2,8 @@ package database_logger
 
 import (
 	"github.com/go-api-template/go-backend/modules/config"
-	console_logger "github.com/go-api-template/go-backend/modules/logger/console"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
@@ -18,7 +18,7 @@ func init() {
 	// If the debug mode is enabled, we use the console logger
 	// Otherwise, we use the file logger
 	if c.App.Debug {
-		DatabaseLogger = console_logger.NewConsoleLogger()
+		DatabaseLogger = log.Logger
 	} else {
 		// access writer
 		fileWriter := &lumberjack.Logger{
