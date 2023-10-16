@@ -229,8 +229,8 @@ func (c *UserControllerImpl) FindById(ctx *gin.Context) {
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string	true	"User id"
-//	@Param			user	body		models.User
+//	@Param			id		path		string		true	"User id"
+//	@Param			user	body		models.User	true	"User information"
 //	@Success		200		{object}	models.User
 //	@Failure		400		{object}	httputil.Error
 //	@Failure		404		{object}	httputil.Message
