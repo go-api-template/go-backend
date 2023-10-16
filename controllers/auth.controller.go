@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"strings"
+	"time"
 )
 
 // AuthController is the controller for authentification
@@ -26,7 +27,6 @@ type AuthController interface {
 	ForgotPassword(ctx *gin.Context)
 	ResetPassword(ctx *gin.Context)
 	ChangePassword(ctx *gin.Context)
-	// todo : delete du compte avec email de validation -> anonymisation des données
 }
 
 // AuthControllerImpl is the controller for authentification
@@ -147,29 +147,35 @@ func (c *AuthControllerImpl) SignIn(ctx *gin.Context) {
 }
 
 func (c *AuthControllerImpl) signin(ctx *gin.Context, user *models.User) {
+	now := time.Now().UTC()
+
 	// Generate access tokens
-	accessToken, err := utils.CreateToken(config.Config.Tokens.Access.ExpiresIn, user, config.Config.Tokens.Access.PrivateKey)
+	accessToken, err := utils.CreateToken(now, config.Config.Tokens.Access.MaxAge, user, config.Config.Tokens.Access.PrivateKey)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().Error(err)
 		return
 	}
+	accessTokenExpiresIn := config.Config.Tokens.Access.MaxAge * 60
+	accessTokenExpiresAt := now.Add(time.Duration(config.Config.Tokens.Access.MaxAge) * time.Minute)
 
 	// Generate refresh tokens
-	refreshToken, err := utils.CreateToken(config.Config.Tokens.Refresh.ExpiresIn, user, config.Config.Tokens.Refresh.PrivateKey)
+	refreshToken, err := utils.CreateToken(now, config.Config.Tokens.Refresh.MaxAge, user, config.Config.Tokens.Refresh.PrivateKey)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().Error(err)
 		return
 	}
+	refreshTokenExpiresIn := config.Config.Tokens.Refresh.MaxAge * 60
 
 	// Set the cookies
-	ctx.SetCookie(CtxAccessToken, accessToken, config.Config.Tokens.Access.MaxAge*60, "/", "localhost", false, true)
-	ctx.SetCookie(CtxRefreshToken, refreshToken, config.Config.Tokens.Refresh.MaxAge*60, "/", "localhost", false, true)
-	ctx.SetCookie(CtxLoggedIn, "true", config.Config.Tokens.Access.MaxAge*60, "/", "localhost", false, false)
+	ctx.SetCookie(CtxAccessToken, accessToken, accessTokenExpiresIn, "/", "localhost", false, true)
+	ctx.SetCookie(CtxRefreshToken, refreshToken, refreshTokenExpiresIn, "/", "localhost", false, true)
+	ctx.SetCookie(CtxLoggedIn, "true", accessTokenExpiresIn, "/", "localhost", false, false)
 
 	// Send the response
 	httputil.Ctx(ctx).Created().Response(&models.AccessToken{
 		AccessToken: accessToken,
-		ExpiresIn:   config.Config.Tokens.Access.MaxAge * 60,
+		ExpiresIn:   accessTokenExpiresIn,
+		ExpiresAt:   accessTokenExpiresAt.Unix(),
 		TokenType:   "Bearer",
 	})
 }
@@ -314,6 +320,7 @@ func (c *AuthControllerImpl) VerifyEmail(ctx *gin.Context) {
 //	@Failure		404	{object}	httputil.Error
 //	@Router			/auth/refresh [get]
 func (c *AuthControllerImpl) RefreshTokens(ctx *gin.Context) {
+	now := time.Now().UTC()
 
 	// Get the refresh token from the cookie
 	token, err := ctx.Cookie(CtxRefreshToken)
@@ -348,19 +355,24 @@ func (c *AuthControllerImpl) RefreshTokens(ctx *gin.Context) {
 	}
 
 	// Generate a new access token
-	accessToken, err := utils.CreateToken(config.Config.Tokens.Access.ExpiresIn, user, config.Config.Tokens.Access.PrivateKey)
+	accessToken, err := utils.CreateToken(now, config.Config.Tokens.Access.MaxAge, user, config.Config.Tokens.Access.PrivateKey)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().Error(err)
 		return
 	}
+	accessTokenExpiresIn := config.Config.Tokens.Access.MaxAge * 60
+	accessTokenExpiresAt := now.Add(time.Duration(config.Config.Tokens.Access.MaxAge) * time.Minute)
 
 	// Set the cookie
-	ctx.SetCookie(CtxAccessToken, accessToken, config.Config.Tokens.Access.MaxAge*60, "/", "localhost", false, true)
-	ctx.SetCookie(CtxLoggedIn, "true", config.Config.Tokens.Access.MaxAge*60, "/", "localhost", false, false)
+	ctx.SetCookie(CtxAccessToken, accessToken, accessTokenExpiresIn, "/", "localhost", false, true)
+	ctx.SetCookie(CtxLoggedIn, "true", accessTokenExpiresIn, "/", "localhost", false, false)
 
 	// Send the response
 	httputil.Ctx(ctx).Ok().Response(&models.AccessToken{
 		AccessToken: accessToken,
+		ExpiresIn:   accessTokenExpiresIn,
+		ExpiresAt:   accessTokenExpiresAt.Unix(),
+		TokenType:   "Bearer",
 	})
 }
 

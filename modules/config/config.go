@@ -24,7 +24,7 @@ var buildDate = "not defined"
 // AppConfig holds the configiration of the application
 // It is loaded from environment variables and/or app.env file
 type AppConfig struct {
-	// todo : add more comments
+	// App holds the application information
 	App struct {
 		Name          string `env:"APP_NAME" validate:"required"`
 		env           string `env:"APP_ENV" default:"production" validate:"required,oneof=production staging development"`
@@ -34,27 +34,32 @@ type AppConfig struct {
 		BuildDate     string
 	}
 
+	// Cors holds the cors configuration
+	// It is used by the cors middleware
 	Cors struct {
 		Origins []string `env:"CORS_ALLOWED_ORIGINS" default:"*"`
 	}
 
+	// Tokens holds the access and refresh token
 	Tokens struct {
+		// Access token is used to authenticate the user
 		Access struct {
 			PrivateKey string        `env:"ACCESS_TOKEN_PRIVATE_KEY" validate:"required"`
 			PublicKey  string        `env:"ACCESS_TOKEN_PUBLIC_KEY" validate:"required"`
-			ExpiresIn  time.Duration `env:"ACCESS_TOKEN_EXPIRED_IN" default:"15m"`
 			MaxAge     int           `env:"ACCESS_TOKEN_MAX_AGE" default:"15" validate:"required"`
-			// todo : voir la différence entre MaxAge et ExpiresIn
+			expiresIn  time.Duration ``
 		}
+		// Refresh token is used to refresh the access token
 		Refresh struct {
 			PrivateKey string        `env:"REFRESH_TOKEN_PRIVATE_KEY" validate:"required"`
 			PublicKey  string        `env:"REFRESH_TOKEN_PUBLIC_KEY" validate:"required"`
-			ExpiresIn  time.Duration `env:"REFRESH_TOKEN_EXPIRED_IN" default:"60m"`
 			MaxAge     int           `env:"REFRESH_TOKEN_MAX_AGE" default:"60" validate:"required"`
-			// todo : voir la différence entre MaxAge et ExpiresIn
+			expiresIn  time.Duration ``
 		}
 	}
 
+	// Logs defines how the logs are written
+	// There is two log files : access and database
 	Logs struct {
 		// Configure the access log file, it's size, age, and how many backups to retain.
 		Access struct {
@@ -123,6 +128,7 @@ type AppConfig struct {
 		}
 	}
 
+	// Server holds the server configuration such as host, port, base path, etc.
 	Server struct {
 		Scheme   string
 		Host     string `env:"APP_HOST" validate:"required"`
@@ -131,10 +137,13 @@ type AppConfig struct {
 		Url      string
 	}
 
+	// Client holds the client url
+	// It is used in email templates such as verification email or reset password email
 	Client struct {
 		Url string `env:"CLIENT_ORIGIN" validate:"required"`
 	}
 
+	// Database holds the database configuration
 	Database struct {
 		Host             string `env:"POSTGRES_HOST" validate:"required"`
 		Port             string `env:"POSTGRES_PORT" validate:"required"`
@@ -145,11 +154,13 @@ type AppConfig struct {
 		ConnectionString string `env:"POSTGRES_CONNECTION_STRING"`
 	}
 
+	// Redis holds the redis configuration
 	Redis struct {
 		Host string `env:"REDIS_HOST" validate:"required"`
 		Port string `env:"REDIS_PORT" validate:"required"`
 	}
 
+	// Mailer holds the configuration of the mailer
 	Mailer Mailer
 }
 
@@ -218,9 +229,6 @@ func (c *AppConfig) Setup() {
 	// update server config
 	c.setupServer()
 
-	// update token config
-	c.setupTokens()
-
 	// update log config
 	c.setupLogs()
 
@@ -264,17 +272,6 @@ func (c *AppConfig) setupServer() {
 	// Clean the base path
 	c.Server.BasePath = strings.Trim(c.Server.BasePath, " ")
 	c.Server.BasePath = strings.Trim(c.Server.BasePath, "/")
-}
-
-// setupTokens updates the token config
-func (c *AppConfig) setupTokens() {
-	// Token expiration
-	if c.Tokens.Access.ExpiresIn == 0 {
-		c.Tokens.Access.ExpiresIn = time.Duration(c.Tokens.Access.MaxAge) * time.Minute
-	}
-	if c.Tokens.Refresh.ExpiresIn == 0 {
-		c.Tokens.Refresh.ExpiresIn = time.Duration(c.Tokens.Refresh.MaxAge) * time.Minute
-	}
 }
 
 // setupLogs updates the log config

@@ -40,9 +40,17 @@ definitions:
     properties:
       email:
         type: string
+      first_name:
+        type: string
       id:
+        description: User information
+        type: string
+      last_name:
+        type: string
+      name:
         type: string
       reset_token:
+        description: Password reset
         type: string
       role:
         $ref: '#/definitions/models.Role'
@@ -74,7 +82,9 @@ definitions:
     properties:
       email:
         type: string
-      name:
+      first_name:
+        type: string
+      last_name:
         type: string
       password:
         minLength: 8
@@ -83,7 +93,8 @@ definitions:
         type: string
     required:
     - email
-    - name
+    - first_name
+    - last_name
     - password
     - password_confirm
     type: object
@@ -273,6 +284,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/httputil.Message'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.Error'
       summary: Sign out current user
       tags:
       - auth
@@ -378,6 +393,211 @@ paths:
       summary: Send welcome email
       tags:
       - auth
+  /user/me:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the connected user
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/httputil.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Delete the connected user
+      tags:
+      - user
+    patch:
+      consumes:
+      - application/json
+      description: Update information about the connected user
+      parameters:
+      - description: User information
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/httputil.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Update information about the connected user
+      tags:
+      - user
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Find all users
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Sort by field
+        in: query
+        name: sort
+        type: string
+      - description: Sort order (asc or desc)
+        in: query
+        name: order
+        type: string
+      - description: Search string
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Find all users
+      tags:
+      - user
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user
+      parameters:
+      - description: User id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/httputil.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Delete a user
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Find a user by id
+      parameters:
+      - description: User id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Find a user by id
+      tags:
+      - user
+    patch:
+      consumes:
+      - application/json
+      description: Update a user
+      parameters:
+      - description: User id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User information
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httputil.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.Error'
+      summary: Update a user
+      tags:
+      - user
   /users/me:
     get:
       consumes:
@@ -385,7 +605,19 @@ paths:
       description: Get the current user
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.Error'
       summary: Get the current user
       tags:
       - user

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func CreateToken(ttl time.Duration, user *models.User, privateKey string) (string, error) {
+func CreateToken(from time.Time, ttl int, user *models.User, privateKey string) (string, error) {
 	decodedPrivateKey, err := base64.StdEncoding.DecodeString(privateKey)
 	if err != nil {
 		return "", fmt.Errorf("could not decode key: %w", err)
@@ -19,14 +19,12 @@ func CreateToken(ttl time.Duration, user *models.User, privateKey string) (strin
 		return "", fmt.Errorf("create: parse key: %w", err)
 	}
 
-	now := time.Now().UTC()
-
 	claims := make(jwt.MapClaims)
-	claims["sub"] = user.ID             // Subject
-	claims["name"] = user.Email         // Full name
-	claims["iat"] = now.Unix()          // Issued At
-	claims["nbf"] = now.Unix()          // Not Before
-	claims["exp"] = now.Add(ttl).Unix() // Expiration time
+	claims["sub"] = user.ID                                           // Subject
+	claims["name"] = user.Email                                       // Full name
+	claims["iat"] = from.Unix()                                       // Issued At
+	claims["nbf"] = from.Unix()                                       // Not Before
+	claims["exp"] = from.Add(time.Duration(ttl) * time.Minute).Unix() // Expiration time
 
 	token, err := jwt.NewWithClaims(jwt.SigningMethodRS256, claims).SignedString(key)
 
