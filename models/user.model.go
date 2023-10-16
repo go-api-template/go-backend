@@ -9,20 +9,27 @@ import (
 )
 
 type User struct {
-	ID                uuid.UUID      `json:"id"                             gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	Email             string         `json:"email"                          gorm:"uniqueIndex;not null"`
-	Name              string         `json:"name"                           gorm:"not null"`
-	FirstName         string         `json:"first_name"                     gorm:"not null"`
-	LastName          string         `json:"last_name"                      gorm:"not null"`
-	Password          string         `json:"-"                              gorm:"not null"`
-	Role              Role           `json:"role"                           gorm:"type:varchar(255);not null"`
-	Verified          bool           `json:"-"                              gorm:"not null"`
-	VerificationToken string         `json:"verification_token,omitempty"`
-	ResetToken        string         `json:"reset_token,omitempty"`
-	CreatedAt         time.Time      `json:"-"                              gorm:"not null"`
-	UpdatedAt         time.Time      `json:"-"                              gorm:"not null"`
-	ResetedAt         sql.NullTime   `json:"-"`
-	DeletedAt         gorm.DeletedAt `json:"-"                              gorm:"index"`
+	// User information
+	ID        uuid.UUID `json:"id"         gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+	Email     string    `json:"email"      gorm:"uniqueIndex;not null"`
+	Name      string    `json:"name"       gorm:"not null"`
+	FirstName string    `json:"first_name" gorm:"not null"`
+	LastName  string    `json:"last_name"  gorm:"not null"`
+	Password  string    `json:"-"          gorm:"not null"`
+	Role      Role      `json:"role"       gorm:"type:varchar(255);not null"`
+
+	// User status
+	Verified          bool   `json:"-"     gorm:"not null"`
+	VerificationToken string `json:"verification_token,omitempty"`
+
+	// Password reset
+	ResetToken  string       `json:"reset_token,omitempty"`
+	LastResetAt sql.NullTime `json:"-"`
+
+	// Timestamps
+	CreatedAt time.Time      `json:"-"      gorm:"not null"`
+	UpdatedAt time.Time      `json:"-"      gorm:"not null"`
+	DeletedAt gorm.DeletedAt `json:"-"      gorm:"index"`
 }
 
 type UserSignUp struct {
@@ -46,7 +53,7 @@ type UserPasswordConfirmation struct {
 // SetResetToken sets the reset token
 func (u *User) SetResetToken(token string) {
 	u.ResetToken = token
-	u.ResetedAt = sql.NullTime{Time: time.Now(), Valid: true}
+	u.LastResetAt = sql.NullTime{Time: time.Now(), Valid: true}
 }
 
 // Response returns the user without the password
