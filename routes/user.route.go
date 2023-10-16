@@ -15,19 +15,22 @@ func NewUserRoutesController(userController controllers.UserController) UserRout
 }
 
 func (r *UserRoutesController) NewRoutes(rg *gin.RouterGroup) {
-	users := rg.Group("users").
-		Use(middlewares.ContextUser()).
+	// user routes for logged-in users
+	user := rg.Group("user").
 		Use(middlewares.VerifiedUser())
-	users.GET("/me", r.userController.GetMe)
-	users.PATCH("/me", r.userController.UpdateMe)
-	users.DELETE("/me", r.userController.DeleteMe)
+	user.GET("/me", r.userController.GetMe)
+	user.PATCH("/me", r.userController.UpdateMe)
+	user.DELETE("/me", r.userController.DeleteMe)
 
+	// user routes for admin users
+	userSecured := rg.Group("user").
+		Use(middlewares.AdminUser())
+	userSecured.GET("/:id", r.userController.FindById)
+	userSecured.PATCH("/:id", r.userController.Update)
+	userSecured.DELETE("/:id", r.userController.Delete)
+
+	// users routes for admin users
 	usersSecured := rg.Group("users").
-		Use(middlewares.ContextUser()).
-		Use(middlewares.VerifiedUser()).
 		Use(middlewares.AdminUser())
 	usersSecured.GET("/", r.userController.FindAll)
-	usersSecured.GET("/:id", r.userController.FindById)
-	usersSecured.PATCH("/:id", r.userController.Update)
-	usersSecured.DELETE("/:id", r.userController.Delete)
 }

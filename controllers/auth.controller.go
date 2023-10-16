@@ -91,8 +91,10 @@ func (c *AuthControllerImpl) SignUp(ctx *gin.Context) {
 
 	// Send verification code to user email address in background
 	go func() {
-		if err := c.mailerService.SendVerificationToken(user); err != nil {
-			log.Error().Err(err).Msg("Failed to send verification code")
+		if user.VerificationToken != "" {
+			if err := c.mailerService.SendVerificationToken(user); err != nil {
+				log.Error().Err(err).Msg("Failed to send verification code")
+			}
 		}
 	}()
 

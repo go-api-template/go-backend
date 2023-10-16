@@ -134,6 +134,7 @@ func VerifiedUser() gin.HandlerFunc {
 			return
 		}
 
+		ctx.Set(CtxUser, user)
 		ctx.Next()
 	}
 }
@@ -163,6 +164,7 @@ func AdminUser() gin.HandlerFunc {
 			return
 		}
 
+		ctx.Set(CtxUser, user)
 		ctx.Next()
 	}
 }

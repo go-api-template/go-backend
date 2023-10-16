@@ -44,20 +44,12 @@ func NewUserController(userService services.UserService) UserController {
 //	@Produce		json
 //	@Success		200	{object}	models.User
 //	@Failure		400	{object}	httputil.Error
-//	@Failure		500	{object}	httputil.Error
 //	@Router			/users/me [get]
 func (c *UserControllerImpl) GetMe(ctx *gin.Context) {
 	// Get the user from the context
-	cu, err := middlewares.GetUserFromContext(ctx)
+	user, err := middlewares.GetUserFromContext(ctx)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().Error(err)
-		return
-	}
-
-	// Get the user from the database
-	user, err := c.userService.FindById(cu.ID)
-	if err != nil {
-		httputil.Ctx(ctx).InternalServerError().Error(err)
 		return
 	}
 
@@ -80,7 +72,7 @@ func (c *UserControllerImpl) GetMe(ctx *gin.Context) {
 //	@Router			/user/me [patch]
 func (c *UserControllerImpl) UpdateMe(ctx *gin.Context) {
 	// Get the user from the context
-	cu, err := middlewares.GetUserFromContext(ctx)
+	user, err := middlewares.GetUserFromContext(ctx)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().Error(err)
 		return
@@ -89,13 +81,6 @@ func (c *UserControllerImpl) UpdateMe(ctx *gin.Context) {
 	// Retrieve the user from the request body
 	var payload models.User
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		httputil.Ctx(ctx).BadRequest().Error(err)
-		return
-	}
-
-	// Get the user from the database
-	user, err := c.userService.FindById(cu.ID)
-	if err != nil {
 		httputil.Ctx(ctx).BadRequest().Error(err)
 		return
 	}
@@ -111,7 +96,7 @@ func (c *UserControllerImpl) UpdateMe(ctx *gin.Context) {
 		user.LastName = payload.LastName
 	}
 
-	user, err = c.userService.Update(cu.ID, user)
+	user, err = c.userService.Update(user.ID, user)
 	if err != nil {
 		httputil.Ctx(ctx).InternalServerError().Error(err)
 		return

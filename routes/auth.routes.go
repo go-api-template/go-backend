@@ -25,7 +25,6 @@ func (r *AuthRoutesController) NewRoutes(rg *gin.RouterGroup) {
 	auth.PATCH("/reset-password/:token", r.authController.ResetPassword)
 
 	authSecured := auth.Group("").
-		Use(middlewares.ContextUser()).
 		Use(middlewares.VerifiedUser())
 	authSecured.GET("/signout", r.authController.SignOut)
 	authSecured.POST("/change-password", r.authController.ChangePassword)
