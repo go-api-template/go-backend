@@ -137,3 +137,32 @@ func VerifiedUser() gin.HandlerFunc {
 		ctx.Next()
 	}
 }
+
+// AdminUser checks if the user is an admin
+func AdminUser() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		// Get the user from the context
+		user, err := authorizer.contextUser(ctx)
+		if err != nil {
+			httputil.Ctx(ctx).Unauthorized().Message(err.Error())
+			ctx.Abort()
+			return
+		}
+
+		// Check if the user exists
+		if user == nil {
+			httputil.Ctx(ctx).Unauthorized().Message("User not found")
+			ctx.Abort()
+			return
+		}
+
+		// Check if the user is an admin
+		if !user.Role.IsAdmin() {
+			httputil.Ctx(ctx).Unauthorized().Message("You are not an admin")
+			ctx.Abort()
+			return
+		}
+
+		ctx.Next()
+	}
+}

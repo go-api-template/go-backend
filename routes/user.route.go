@@ -21,4 +21,13 @@ func (r *UserRoutesController) NewRoutes(rg *gin.RouterGroup) {
 	users.GET("/me", r.userController.GetMe)
 	users.PATCH("/me", r.userController.UpdateMe)
 	users.DELETE("/me", r.userController.DeleteMe)
+
+	usersSecured := rg.Group("users").
+		Use(middlewares.ContextUser()).
+		Use(middlewares.VerifiedUser()).
+		Use(middlewares.AdminUser())
+	usersSecured.GET("/", r.userController.FindAll)
+	usersSecured.GET("/:id", r.userController.FindById)
+	usersSecured.PATCH("/:id", r.userController.Update)
+	usersSecured.DELETE("/:id", r.userController.Delete)
 }

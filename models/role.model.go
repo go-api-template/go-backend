@@ -30,3 +30,13 @@ func ParseRole(s string) (r Role, err error) {
 	}
 	return r, nil
 }
+
+// IsAdmin checks if the role is admin
+func (r Role) IsAdmin() bool {
+	return r == RoleAdmin
+}
+
+// IsUser checks if the role is user
+func (r Role) IsUser() bool {
+	return r == RoleUser
+}
