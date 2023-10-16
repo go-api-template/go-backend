@@ -42,11 +42,9 @@ func (s *AuthServiceImpl) SignUp(user *models.UserSignUp) (*models.User, error) 
 
 	// Create a new user from the SignUp input
 	newUser := &models.User{
-		//Name:     user.Name,
 		Email:    strings.ToLower(user.Email),
 		Password: hashedPassword,
 		Role:     models.RoleUser,
-		Verified: false,
 	}
 
 	// Add the new user to the database

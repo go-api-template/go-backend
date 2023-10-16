@@ -15,17 +15,10 @@ func NewUserRoutesController(userController controllers.UserController) UserRout
 }
 
 func (r *UserRoutesController) NewRoutes(rg *gin.RouterGroup) {
-
-	// Public users routes
-	users := rg.Group("/users")
-	users.Use(middlewares.ContextUser())
-	//users.Use(middlewares.VerifiedUser(userService))
+	users := rg.Group("users").
+		Use(middlewares.ContextUser()).
+		Use(middlewares.VerifiedUser())
 	users.GET("/me", r.userController.GetMe)
-
-	// Private users routes
-
-	// Public user routes
-
-	// Public user routes
-
+	users.PATCH("/me", r.userController.UpdateMe)
+	users.DELETE("/me", r.userController.DeleteMe)
 }

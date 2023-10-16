@@ -6,6 +6,7 @@ require (
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/gin v1.9.1
+	github.com/go-faker/faker/v4 v4.2.0
 	github.com/go-mods/convert v0.3.0
 	github.com/go-mods/zerolog-gorm v0.1.0
 	github.com/go-mods/zerolog-quick v0.1.0

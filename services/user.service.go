@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/go-api-template/go-backend/models"
 	"github.com/go-api-template/go-backend/modules/utils"
+	"github.com/go-faker/faker/v4"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
@@ -21,6 +22,7 @@ type UserService interface {
 	FindByResetPasswordToken(resetPasswordToken string) (*models.User, error)
 
 	Update(id uuid.UUID, user *models.User) (*models.User, error)
+	Delete(id uuid.UUID) error
 }
 
 // UserServiceImpl is the service for the user
@@ -53,10 +55,17 @@ func (s *UserServiceImpl) Create(user *models.UserSignUp) (*models.User, error) 
 	newUser := &models.User{
 		//Name:             user.Name,
 		Email:             strings.ToLower(user.Email),
+		FirstName:         user.FirstName,
+		LastName:          user.LastName,
 		Password:          hashedPassword,
 		Role:              models.RoleUser,
 		VerificationToken: verificationCode,
 		Verified:          false,
+	}
+
+	// Set the name if it is empty
+	if len(newUser.Name) == 0 {
+		newUser.Name = newUser.FirstName + " " + newUser.LastName
 	}
 
 	// Add the new user to the database
@@ -136,7 +145,7 @@ func (s *UserServiceImpl) Update(id uuid.UUID, user *models.User) (*models.User,
 	// Update the user
 	// Use select("*") to update all fields, even if they are empty
 	// this prevent zero value fields from being updated
-	result := s.gormDb.Model(user).Select("*").Updates(user)
+	result := s.gormDb.Model(user).Select("*").Where("id = ?", id).Updates(user)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -144,4 +153,41 @@ func (s *UserServiceImpl) Update(id uuid.UUID, user *models.User) (*models.User,
 		return s.FindById(id)
 	}
 	return nil, nil
+}
+
+func (s *UserServiceImpl) Delete(id uuid.UUID) error {
+	// Anonymize the user
+	user, err := s.anonymize(id)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return errors.New("unknown user")
+	}
+
+	// Delete the user from the database
+	result := s.gormDb.Delete(user)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected > 0 {
+		return nil
+	}
+	return errors.New("unknown user")
+}
+
+func (s *UserServiceImpl) anonymize(id uuid.UUID) (*models.User, error) {
+	// Get the user from the database
+	user, err := s.FindById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Anonymize the user
+	user.Email = faker.Email()
+	user.Name = faker.Name()
+	user.FirstName = faker.FirstName()
+	user.LastName = faker.LastName()
+
+	return s.Update(id, user)
 }

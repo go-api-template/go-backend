@@ -41,6 +41,8 @@ github.com/gin-gonic/gin v1.6.3/go.mod h1:75u5sXoLsGZoRN5Sgbi1eraJ4GU3++wFwWzhwv
 github.com/gin-gonic/gin v1.8.1/go.mod h1:ji8BvRH1azfM+SYow9zQ6SZMvR8qOMZHmsCuWR9tTTk=
 github.com/gin-gonic/gin v1.9.1 h1:4idEAncQnU5cB7BeOkPtxjfCSye0AAm1R0RVIqJ+Jmg=
 github.com/gin-gonic/gin v1.9.1/go.mod h1:hPrL7YrpYKXt5YId3A/Tnip5kqbEAP+KLuI3SUcPTeU=
+github.com/go-faker/faker/v4 v4.2.0 h1:dGebOupKwssrODV51E0zbMrv5e2gO9VWSLNC1WDCpWg=
+github.com/go-faker/faker/v4 v4.2.0/go.mod h1:F/bBy8GH9NxOxMInug5Gx4WYeG6fHJZ8Ol/dhcpRub4=
 github.com/go-mods/convert v0.3.0 h1:kKgLu7iHbvVb/mOVDAvPpPiMeOF+2joT6uj5s3kAsDI=
 github.com/go-mods/convert v0.3.0/go.mod h1:eo72jPQm5UJVbrINw8EUpvsCDZUXq3ZG2vAjUOo40ys=
 github.com/go-mods/zerolog-gorm v0.1.0 h1:NTfaaFrUdek7GSqW6Nh0BxXteH9pbPnV+09jK1IXr7o=

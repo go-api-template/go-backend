@@ -12,7 +12,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"strings"
-	"time"
 )
 
 // AuthController is the controller for authentification
@@ -399,8 +398,7 @@ func (c *AuthControllerImpl) ForgotPassword(ctx *gin.Context) {
 	}
 
 	// Generate a reset token
-	user.ResetToken = utils.Encode(utils.GenerateRandomString(32))
-	user.ResetedAt = time.Now()
+	user.SetResetToken(utils.Encode(utils.GenerateRandomString(32)))
 
 	// Update the user
 	if _, err := c.userService.Update(user.ID, user); err != nil {
@@ -471,10 +469,9 @@ func (c *AuthControllerImpl) ResetPassword(ctx *gin.Context) {
 		return
 	}
 	user.Password = hashedPassword
-	user.ResetedAt = time.Time{}
 
 	// Clear the reset token
-	user.ResetToken = ""
+	user.SetResetToken("")
 
 	// Update the user
 	if _, err := c.userService.Update(user.ID, user); err != nil {
@@ -483,7 +480,7 @@ func (c *AuthControllerImpl) ResetPassword(ctx *gin.Context) {
 	}
 
 	// Sign out the user
-	c.SignOut(ctx)
+	c.signOut(ctx, user)
 }
 
 // ChangePassword godoc
@@ -531,7 +528,6 @@ func (c *AuthControllerImpl) ChangePassword(ctx *gin.Context) {
 		return
 	}
 	user.Password = hashedPassword
-	user.ResetedAt = time.Time{}
 
 	// Update the user
 	if _, err := c.userService.Update(user.ID, user); err != nil {

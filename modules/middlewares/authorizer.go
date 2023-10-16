@@ -120,6 +120,13 @@ func VerifiedUser() gin.HandlerFunc {
 			return
 		}
 
+		// Check if the user exists
+		if user == nil {
+			httputil.Ctx(ctx).Unauthorized().Message("User not found")
+			ctx.Abort()
+			return
+		}
+
 		// Check if the user is verified
 		if !user.Verified {
 			httputil.Ctx(ctx).Unauthorized().Message("Your account is not verified")
