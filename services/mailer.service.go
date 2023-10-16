@@ -126,6 +126,10 @@ func (s *MailerServiceImpl) generateFromTemplate(tplName TplName, data any) (bod
 
 // SendVerificationToken sends a verification token to the user
 func (s *MailerServiceImpl) SendVerificationToken(user *models.User) error {
+	if user.VerificationToken == "" {
+		return errors.New("verification token is empty")
+	}
+
 	// data to be passed to the template
 	data := map[string]any{
 		"Title":     fmt.Sprintf("Your verification code %s", config.Config.App.Name),
@@ -151,12 +155,16 @@ func (s *MailerServiceImpl) SendVerificationToken(user *models.User) error {
 
 // SendResetToken sends a reset token to the user
 func (s *MailerServiceImpl) SendResetToken(user *models.User) error {
+	if user.ResetToken == "" {
+		return errors.New("reset token is empty")
+	}
+
 	// data to be passed to the template
 	data := map[string]any{
 		"Title":    fmt.Sprintf("Reset your %s password", config.Config.App.Name),
 		"AppUrl":   config.Config.Server.Url,
 		"AppName":  config.Config.App.Name,
-		"ResetUrl": config.Config.Client.Url + "/auth/reset-password?key=" + user.VerificationToken,
+		"ResetUrl": config.Config.Client.Url + "/auth/reset-password?key=" + user.ResetToken,
 	}
 
 	// Generate the email body from the template

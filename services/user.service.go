@@ -71,6 +71,13 @@ func (s *UserServiceImpl) Create(user *models.UserSignUp) (*models.User, error) 
 		newUser.Name = newUser.FirstName + " " + newUser.LastName
 	}
 
+	// If this is the first user, set the role to admin
+	if s.gormDb.First(&models.User{}).RowsAffected == 0 {
+		newUser.Role = models.RoleAdmin
+		newUser.Verified = true
+		newUser.VerificationToken = ""
+	}
+
 	// Add the new user to the database
 	if results := s.gormDb.Create(&newUser); results.Error != nil {
 		var pgError *pgconn.PgError
