@@ -1,0 +1,978 @@
+{
+	"info": {
+		"_postman_id": "18ab9107-8a20-4f77-90bb-d914795e2ef3",
+		"name": "go-backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19416465"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const json = pm.response.json();\r",
+									"pm.collectionVariables.set(\"verification_token\", json.verification_token);\r",
+									"\r",
+									"pm.test(\"Récupération du code de vérification\", () => {\r",
+									"    pm.expect(pm.collectionVariables.get(\"verification_token\")).to.be.not.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"first_name\": \"John\",\r\n    \"last_name\": \"Doe\",\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirm\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/signup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Welcome",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const json = pm.response.json();\r",
+									"pm.collectionVariables.set(\"verification_token\", json.verification_token);\r",
+									"\r",
+									"pm.test(\"Récupération du code de vérification\", () => {\r",
+									"    pm.expect(pm.collectionVariables.get(\"verification_token\")).to.be.not.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/welcome/:email",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"welcome",
+								":email"
+							],
+							"variable": [
+								{
+									"key": "email",
+									"value": "{{email}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email Address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"verification_token\", \"\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/auth/verify/{{verification_token}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"verify",
+								"{{verification_token}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const json = pm.response.json();\r",
+									"pm.collectionVariables.set(\"access_token\", json.access_token);\r",
+									"\r",
+									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"    pm.expect(pm.collectionVariables.get(\"access_token\")).to.be.not.empty;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/signin",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const json = pm.response.json();\r",
+									"pm.collectionVariables.set(\"access_token\", json.access_token);\r",
+									"\r",
+									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"    pm.expect(pm.collectionVariables.get(\"access_token\")).to.be.not.empty;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/refresh",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"access_token\", \"\");\r",
+									"pm.collectionVariables.set(\"user_id\", \"\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/auth/signout",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"signout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const json = pm.response.json();\r",
+									"pm.collectionVariables.set(\"reset_token\", json.reset_token);\r",
+									"\r",
+									"pm.test(\"Récupération du token\", () => {\r",
+									"    pm.expect(pm.collectionVariables.get(\"reset_token\")).to.be.not.empty;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/forgot-password/:email",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"forgot-password",
+								":email"
+							],
+							"variable": [
+								{
+									"key": "email",
+									"value": "{{email}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirm\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/reset-password/:reset_token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"reset-password",
+								":reset_token"
+							],
+							"variable": [
+								{
+									"key": "reset_token",
+									"value": "{{reset_token}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirm\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/change-password",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get Me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const json = pm.response.json();\r",
+									"pm.collectionVariables.set(\"user_id\", json.id);\r",
+									"\r",
+									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"    pm.expect(pm.collectionVariables.get(\"user_id\")).to.be.not.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/user/me",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const json = pm.response.json();\r",
+									"pm.collectionVariables.set(\"user_id\", json.id);\r",
+									"\r",
+									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"    pm.expect(pm.collectionVariables.get(\"user_id\")).to.be.not.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"The John Doe\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/user/me",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"access_token\", \"\");\r",
+									"pm.collectionVariables.set(\"user_id\", \"\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/user/me",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/user/{{user_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const json = pm.response.json();\r",
+									"pm.collectionVariables.set(\"user_id\", json.id);\r",
+									"\r",
+									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"    pm.expect(pm.collectionVariables.get(\"user_id\")).to.be.not.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"The John Doe\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/user/{{user_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"    pm.response.to.be.json;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/user/{{user_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "name",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "asc",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ping",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Vérification du code de retour\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/ping",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "healthcheck",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Vérification du code de retour\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/healthcheck",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"healthcheck"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Vérification du code de retour\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/status",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"status"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+        {
+            "key": "host",
+            "value": "localhost:8080/v1",
+            "type": "string"
+        },
+		{
+			"key": "email",
+			"value": "johndoe@gmail.com",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "password123",
+			"type": "string"
+		}
+	]
+}
