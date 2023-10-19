@@ -83,7 +83,7 @@ func ContextUser() gin.HandlerFunc {
 		// Get the user from the context
 		user, err := authorizer.contextUser(ctx)
 		if err != nil {
-			httputil.Ctx(ctx).Unauthorized().Message(err.Error())
+			httputil.Ctx(ctx).Unauthorized().WithError(err).Send()
 			ctx.Abort()
 			return
 		}
@@ -115,21 +115,31 @@ func VerifiedUser() gin.HandlerFunc {
 		// Get the user from the context
 		user, err := authorizer.contextUser(ctx)
 		if err != nil {
-			httputil.Ctx(ctx).Unauthorized().Message(err.Error())
+			httputil.Ctx(ctx).Unauthorized().
+				WithCode("user_error").
+				WithDescription("You are not logged in").
+				WithError(err.Error()).
+				Send()
 			ctx.Abort()
 			return
 		}
 
 		// Check if the user exists
 		if user == nil {
-			httputil.Ctx(ctx).Unauthorized().Message("User not found")
+			httputil.Ctx(ctx).Unauthorized().
+				WithCode("user_error").
+				WithDescription("User not found").
+				Send()
 			ctx.Abort()
 			return
 		}
 
 		// Check if the user is verified
 		if !user.Verified {
-			httputil.Ctx(ctx).Unauthorized().Message("Your account is not verified")
+			httputil.Ctx(ctx).Unauthorized().
+				WithCode("user_error").
+				WithDescription("Your account is not verified").
+				Send()
 			ctx.Abort()
 			return
 		}
@@ -145,21 +155,27 @@ func AdminUser() gin.HandlerFunc {
 		// Get the user from the context
 		user, err := authorizer.contextUser(ctx)
 		if err != nil {
-			httputil.Ctx(ctx).Unauthorized().Message(err.Error())
+			httputil.Ctx(ctx).Unauthorized().WithError(err.Error()).Send()
 			ctx.Abort()
 			return
 		}
 
 		// Check if the user exists
 		if user == nil {
-			httputil.Ctx(ctx).Unauthorized().Message("User not found")
+			httputil.Ctx(ctx).Unauthorized().
+				WithCode("user_error").
+				WithDescription("User not found").
+				Send()
 			ctx.Abort()
 			return
 		}
 
 		// Check if the user is an admin
 		if !user.Role.IsAdmin() {
-			httputil.Ctx(ctx).Unauthorized().Message("You are not an admin")
+			httputil.Ctx(ctx).Unauthorized().
+				WithCode("user_error").
+				WithDescription("You are not an admin").
+				Send()
 			ctx.Abort()
 			return
 		}

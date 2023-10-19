@@ -32,7 +32,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "400": {
@@ -96,7 +96,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "400": {
@@ -183,7 +183,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "400": {
@@ -282,7 +282,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "401": {
@@ -378,7 +378,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "400": {
@@ -464,7 +464,7 @@
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "400": {
@@ -514,7 +514,7 @@
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "400": {
@@ -669,7 +669,7 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "500": {
@@ -705,7 +705,7 @@
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "400": {
@@ -717,7 +717,7 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "500": {
@@ -774,7 +774,7 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Message"
+                            "$ref": "#/definitions/httputil.Success"
                         }
                     },
                     "500": {
@@ -792,25 +792,29 @@
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer",
-                    "example": 404
+                    "type": "string",
+                    "example": "server_code"
                 },
                 "data": {},
-                "message": {
+                "description": {
                     "type": "string",
-                    "example": "not found"
+                    "example": "a server message"
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {}
                 }
             }
         },
-        "httputil.Message": {
+        "httputil.Success": {
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer",
-                    "example": 200
+                    "type": "string",
+                    "example": "server_code"
                 },
                 "data": {},
-                "message": {
+                "description": {
                     "type": "string",
                     "example": "a server message"
                 }

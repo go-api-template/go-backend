@@ -86,6 +86,7 @@ tasks:
         desc: "Build the go binary"
         cmds:
             - echo "Building..."
+            - mkdir -p {{.BUILD_FOLDER}}
             - cp -rf templates -t {{.BUILD_FOLDER}}
             - cp -rf assets -t {{.BUILD_FOLDER}}
             - go build -v -trimpath -ldflags "-w -s -X modules.config.version={{.VERSION}} -X modules.config.buildDate={{.BUILD_DATE}}" -o {{.BUILD_FOLDER}}/{{.PROJECT_NAME}}{{exeExt}}

@@ -13,7 +13,7 @@ func NewPingRoutesController() PingRoutesController {
 
 func (r *PingRoutesController) NewRoutes(rg *gin.RouterGroup) {
 	rg.GET("/ping", func(ctx *gin.Context) {
-		httputil.Ctx(ctx).Ok().Response(gin.H{
+		httputil.Ctx(ctx).Ok().SendRaw(gin.H{
 			"message": "pong",
 		})
 	})

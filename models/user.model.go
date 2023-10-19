@@ -9,6 +9,7 @@ import (
 )
 
 // User model
+//
 //	@description	User model
 type User struct {
 	// User information
@@ -35,6 +36,7 @@ type User struct {
 }
 
 // UserSignUp model
+//
 //	@description	User sign up model used for registration
 type UserSignUp struct {
 	Email           string `json:"email"            binding:"required"`
@@ -45,6 +47,7 @@ type UserSignUp struct {
 }
 
 // UserSignIn model
+//
 //	@description	User sign in model used for authentication
 type UserSignIn struct {
 	Email    string `json:"email"     binding:"required"`
@@ -52,12 +55,14 @@ type UserSignIn struct {
 }
 
 // UserEmail model
+//
 //	@description	User email model used for password reset
 type UserEmail struct {
 	Email string `json:"email" binding:"required"`
 }
 
 // UserPasswordConfirmation model
+//
 //	@description	User password confirmation model used for password reset
 type UserPasswordConfirmation struct {
 	Password        string `json:"password"         binding:"required,min=8"`

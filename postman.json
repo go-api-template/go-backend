@@ -296,7 +296,7 @@
 									"});\r",
 									"\r",
 									"const json = pm.response.json();\r",
-									"pm.collectionVariables.set(\"reset_token\", json.reset_token);\r",
+									"pm.collectionVariables.set(\"reset_token\", json.data);\r",
 									"\r",
 									"pm.test(\"Récupération du token\", () => {\r",
 									"    pm.expect(pm.collectionVariables.get(\"reset_token\")).to.be.not.empty;\r",
@@ -319,20 +319,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/auth/forgot-password/:email",
+							"raw": "{{host}}/auth/forgot-password",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"auth",
-								"forgot-password",
-								":email"
-							],
-							"variable": [
-								{
-									"key": "email",
-									"value": "{{email}}"
-								}
+								"forgot-password"
 							]
 						}
 					},
@@ -959,11 +952,6 @@
 		}
 	],
 	"variable": [
-        {
-            "key": "host",
-            "value": "localhost:8080/v1",
-            "type": "string"
-        },
 		{
 			"key": "email",
 			"value": "johndoe@gmail.com",
@@ -973,6 +961,27 @@
 			"key": "password",
 			"value": "password123",
 			"type": "string"
+		},
+		{
+			"key": "host",
+			"value": "localhost:8080/v1",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "reset_token",
+			"value": ""
+		},
+		{
+			"key": "verification_token",
+			"value": ""
+		},
+		{
+			"key": "user_id",
+			"value": ""
 		}
 	]
 }

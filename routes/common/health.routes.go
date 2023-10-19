@@ -17,7 +17,7 @@ func NewHealthCheckRoutesController() HealthCheckRouteController {
 func (r *HealthCheckRouteController) NewRoutes(rg *gin.RouterGroup) {
 	rg.GET("/healthcheck", func(ctx *gin.Context) {
 		message := fmt.Sprintf("Welcome to go-api-template/%s", config.Config.App.Name)
-		httputil.Ctx(ctx).Ok().Response(gin.H{
+		httputil.Ctx(ctx).Ok().SendRaw(gin.H{
 			"message": message,
 		})
 	})

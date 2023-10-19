@@ -24,7 +24,7 @@ func NewMessage(to, subject, body string) Message {
 	// convert the to string to a mail.Address
 	toAddress := &mail.Address{Address: to}
 
-	// create a new Message
+	// create a new Description
 	message := Message{
 		To:      []*mail.Address{toAddress},
 		Subject: subject,
@@ -52,12 +52,12 @@ func (m *Message) SetHeader(field string, value ...string) {
 
 // ToMessage converts a Message to gomail.Message
 func ToMessage(message *Message) *gomail.Message {
-	// create a new gomail.Message
+	// create a new gomail.Description
 	m := gomail.NewMessage()
 	// set the sender
 	m.SetAddressHeader("From", message.from.Address, message.from.Name)
 	// convert the list of recipients to a list of strings
-	// because gomail.Message.SetHeader() accepts a list of strings
+	// because gomail.Description.SetHeader() accepts a list of strings
 	tos := make([]string, len(message.To))
 	for i, v := range message.To {
 		tos[i] = m.FormatAddress(v.Address, v.Name)

@@ -2,20 +2,23 @@ definitions:
   httputil.Error:
     properties:
       code:
-        example: 404
-        type: integer
-      data: {}
-      message:
-        example: not found
+        example: server_code
         type: string
+      data: {}
+      description:
+        example: a server message
+        type: string
+      errors:
+        items: {}
+        type: array
     type: object
-  httputil.Message:
+  httputil.Success:
     properties:
       code:
-        example: 200
-        type: integer
+        example: server_code
+        type: string
       data: {}
-      message:
+      description:
         example: a server message
         type: string
     type: object
@@ -133,7 +136,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "400":
           description: Bad Request
           schema:
@@ -175,7 +178,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "400":
           description: Bad Request
           schema:
@@ -232,7 +235,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "400":
           description: Bad Request
           schema:
@@ -297,7 +300,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "401":
           description: Unauthorized
           schema:
@@ -360,7 +363,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "400":
           description: Bad Request
           schema:
@@ -418,7 +421,7 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "400":
           description: Bad Request
           schema:
@@ -451,7 +454,7 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "400":
           description: Bad Request
           schema:
@@ -526,7 +529,7 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "400":
           description: Bad Request
           schema:
@@ -534,7 +537,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "500":
           description: Internal Server Error
           schema:
@@ -566,7 +569,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "500":
           description: Internal Server Error
           schema:
@@ -604,7 +607,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Message'
+            $ref: '#/definitions/httputil.Success'
         "500":
           description: Internal Server Error
           schema:

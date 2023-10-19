@@ -16,7 +16,7 @@ func NewStatusRoutesController() StatusRouteController {
 
 func (r *StatusRouteController) NewRoutes(rg *gin.RouterGroup) {
 	rg.GET("/status", func(ctx *gin.Context) {
-		httputil.Ctx(ctx).Ok().Response(gin.H{
+		httputil.Ctx(ctx).Ok().SendRaw(gin.H{
 			"welcome":        fmt.Sprintf("Welcome to to go-api-template/%s", config.Config.App.Name),
 			"version":        config.Config.App.Version,
 			"environnement ": config.Config.App.Environnement,
