@@ -135,7 +135,7 @@ func (s *MailerServiceImpl) SendVerificationToken(user *models.User) error {
 		"Title":     fmt.Sprintf("Your verification code %s", config.Config.App.Name),
 		"AppUrl":    config.Config.Server.Url,
 		"AppName":   config.Config.App.Name,
-		"VerifyUrl": config.Config.Client.Url + "/auth/verify?key=" + user.VerificationToken,
+		"VerifyUrl": config.Config.Client.Url + "/auth/verify-email?key=" + user.VerificationToken,
 	}
 
 	// Generate the email body from the template
