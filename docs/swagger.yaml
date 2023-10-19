@@ -23,6 +23,8 @@ definitions:
     properties:
       access_token:
         type: string
+      expires_at:
+        type: integer
       expires_in:
         type: integer
       token_type:
@@ -37,6 +39,7 @@ definitions:
     - RoleAdmin
     - RoleUser
   models.User:
+    description: User model
     properties:
       email:
         type: string
@@ -57,7 +60,16 @@ definitions:
       verification_token:
         type: string
     type: object
+  models.UserEmail:
+    description: User email model used for password reset
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
   models.UserPasswordConfirmation:
+    description: User password confirmation model used for password reset
     properties:
       password:
         minLength: 8
@@ -69,6 +81,7 @@ definitions:
     - password_confirm
     type: object
   models.UserSignIn:
+    description: User sign in model used for authentication
     properties:
       email:
         type: string
@@ -79,6 +92,7 @@ definitions:
     - password
     type: object
   models.UserSignUp:
+    description: User sign up model used for registration
     properties:
       email:
         type: string
@@ -150,11 +164,11 @@ paths:
       description: Send a reset token by email
       parameters:
       - description: User email
-        format: email
-        in: path
+        in: body
         name: email
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/models.UserEmail'
       produces:
       - application/json
       responses:
@@ -612,10 +626,6 @@ paths:
             $ref: '#/definitions/models.User'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/httputil.Error'
-        "500":
-          description: Internal Server Error
           schema:
             $ref: '#/definitions/httputil.Error'
       summary: Get the current user

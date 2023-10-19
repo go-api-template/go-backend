@@ -385,18 +385,20 @@ func (c *AuthControllerImpl) RefreshTokens(ctx *gin.Context) {
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			email	path		string	true	"User email"	Format(email)
+//	@Param			email	body		models.UserEmail	true	"User email"
 //	@Success		201		{object}	httputil.Message
 //	@Failure		400		{object}	httputil.Error
 //	@Failure		401		{object}	httputil.Error
 //	@Router			/auth/forgot-password/{email} [post]
 func (c *AuthControllerImpl) ForgotPassword(ctx *gin.Context) {
-
-	// Get the user email passed in the url
-	email := ctx.Params.ByName("email")
+	var email models.UserEmail
+	if err := ctx.ShouldBindJSON(&email); err != nil {
+		httputil.Ctx(ctx).BadRequest().Error(err)
+		return
+	}
 
 	// Get the user from the database by email
-	user, err := c.userService.FindByEmail(email)
+	user, err := c.userService.FindByEmail(email.Email)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().Error(err)
 		return

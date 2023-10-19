@@ -95,12 +95,13 @@ const docTemplate = `{
                 "summary": "Send a reset token by email",
                 "parameters": [
                     {
-                        "type": "string",
-                        "format": "email",
                         "description": "User email",
                         "name": "email",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserEmail"
+                        }
                     }
                 ],
                 "responses": {
@@ -638,12 +639,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/httputil.Error"
                         }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/httputil.Error"
-                        }
                     }
                 }
             }
@@ -839,6 +834,9 @@ const docTemplate = `{
                 "access_token": {
                     "type": "string"
                 },
+                "expires_at": {
+                    "type": "integer"
+                },
                 "expires_in": {
                     "type": "integer"
                 },
@@ -859,6 +857,7 @@ const docTemplate = `{
             ]
         },
         "models.User": {
+            "description": "User model",
             "type": "object",
             "properties": {
                 "email": {
@@ -889,7 +888,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.UserEmail": {
+            "description": "User email model used for password reset",
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
         "models.UserPasswordConfirmation": {
+            "description": "User password confirmation model used for password reset",
             "type": "object",
             "required": [
                 "password",
@@ -906,6 +918,7 @@ const docTemplate = `{
             }
         },
         "models.UserSignIn": {
+            "description": "User sign in model used for authentication",
             "type": "object",
             "required": [
                 "email",
@@ -921,6 +934,7 @@ const docTemplate = `{
             }
         },
         "models.UserSignUp": {
+            "description": "User sign up model used for registration",
             "type": "object",
             "required": [
                 "email",
