@@ -40,8 +40,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/httputil.Success"
                         }
@@ -94,6 +94,7 @@ const docTemplate = `{
                 "summary": "Send a reset token by email",
                 "parameters": [
                     {
+                        "format": "email",
                         "description": "User email",
                         "name": "email",
                         "in": "body",
@@ -126,8 +127,8 @@ const docTemplate = `{
             }
         },
         "/auth/refresh": {
-            "get": {
-                "description": "Refresh the access token",
+            "post": {
+                "description": "Refresh the access token using the refresh token",
                 "consumes": [
                     "application/json"
                 ],
@@ -138,9 +139,20 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Refresh the access token",
+                "parameters": [
+                    {
+                        "description": "Refresh token",
+                        "name": "token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserToken"
+                        }
+                    }
+                ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.AccessToken"
                         }
@@ -181,7 +193,7 @@ const docTemplate = `{
                 "summary": "Reset the user password",
                 "parameters": [
                     {
-                        "description": "New password",
+                        "description": "New password with confirmation",
                         "name": "password",
                         "in": "body",
                         "required": true,
@@ -278,7 +290,7 @@ const docTemplate = `{
         },
         "/auth/signout": {
             "get": {
-                "description": "Sign out current user",
+                "description": "Sign out the current user.",
                 "consumes": [
                     "application/json"
                 ],
@@ -288,7 +300,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Sign out current user",
+                "summary": "Sign out the current user",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -307,7 +319,7 @@ const docTemplate = `{
         },
         "/auth/signup": {
             "post": {
-                "description": "Create a new user",
+                "description": "Create a new user. The first user created is an admin.",
                 "consumes": [
                     "application/json"
                 ],
@@ -365,7 +377,7 @@ const docTemplate = `{
         },
         "/auth/verify/{token}": {
             "get": {
-                "description": "Verify email address from verification code sent by email",
+                "description": "Verify the email address from verification code sent by email",
                 "consumes": [
                     "application/json"
                 ],
@@ -375,7 +387,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Verify email address",
+                "summary": "Verify the email address",
                 "parameters": [
                     {
                         "type": "string",
@@ -422,12 +434,14 @@ const docTemplate = `{
                 "summary": "Send welcome email",
                 "parameters": [
                     {
-                        "type": "string",
                         "format": "email",
                         "description": "User email",
                         "name": "email",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserEmail"
+                        }
                     }
                 ],
                 "responses": {
@@ -843,6 +857,15 @@ const docTemplate = `{
                 "expires_in": {
                     "type": "integer"
                 },
+                "refresh_expires_at": {
+                    "type": "integer"
+                },
+                "refresh_expires_in": {
+                    "type": "integer"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
                 "token_type": {
                     "type": "string"
                 }
@@ -899,7 +922,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-email@gmail.com"
                 }
             }
         },
@@ -907,16 +931,18 @@ const docTemplate = `{
             "description": "User password confirmation model used for password reset",
             "type": "object",
             "required": [
-                "password",
-                "password_confirm"
+                "confirm",
+                "password"
             ],
             "properties": {
+                "confirm": {
+                    "type": "string",
+                    "example": "strong-password"
+                },
                 "password": {
                     "type": "string",
-                    "minLength": 8
-                },
-                "password_confirm": {
-                    "type": "string"
+                    "minLength": 8,
+                    "example": "strong-password"
                 }
             }
         },
@@ -929,10 +955,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-email@gmail.com"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "strong-password"
                 }
             }
         },
@@ -961,6 +989,18 @@ const docTemplate = `{
                     "minLength": 8
                 },
                 "password_confirm": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserToken": {
+            "description": "Token used for refresh",
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
                     "type": "string"
                 }
             }

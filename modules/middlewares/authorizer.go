@@ -27,11 +27,8 @@ func InitializeAuthorizer(userService services.UserService) {
 	authorizer = &Authorizer{userService}
 }
 
-// contextUser extracts the user from the context
-// The access token can be passed in the Authorization header or in a cookie
-// The access token is validated and the user is extracted from the token
-// The user is then added to the context
-func (a Authorizer) contextUser(ctx *gin.Context) (*models.User, error) {
+// authorization extracts the JWT from the Authorization header or from the cookie
+func (a Authorizer) authorization(ctx *gin.Context) (string, error) {
 	var accessToken string
 
 	// Get the access token from the Authorization header
@@ -52,12 +49,33 @@ func (a Authorizer) contextUser(ctx *gin.Context) (*models.User, error) {
 
 	// Return an error if the access token is empty
 	if accessToken == "" {
-		return nil, errors.New("you are not logged in")
+		return "", errors.New("you are not logged in")
 	}
 
-	// Get the subscriber from the access token
-	subscriber, err := utils.ValidateToken(accessToken, config.Config.Tokens.Access.PublicKey)
+	return accessToken, nil
+}
+
+// contextUser extracts the user from the context
+// The access token can be passed in the Authorization header or in a cookie
+// The access token is validated and the user is extracted from the token
+// The user is then added to the context
+func (a Authorizer) contextUser(ctx *gin.Context) (*models.User, error) {
+	// Get the access token
+	accessToken, err := a.authorization(ctx)
 	if err != nil {
+		return nil, err
+	}
+
+	// Validate the access token
+	claims, err := utils.ValidateToken(accessToken, config.Config.Tokens.Access.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the subscriber from the refresh token
+	subscriber, err := claims.GetSubject()
+	if err != nil {
+		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
 		return nil, err
 	}
 
@@ -118,7 +136,7 @@ func VerifiedUser() gin.HandlerFunc {
 			httputil.Ctx(ctx).Unauthorized().
 				WithCode("user_error").
 				WithDescription("You are not logged in").
-				WithError(err.Error()).
+				WithError(err).
 				Send()
 			ctx.Abort()
 			return
@@ -155,7 +173,9 @@ func AdminUser() gin.HandlerFunc {
 		// Get the user from the context
 		user, err := authorizer.contextUser(ctx)
 		if err != nil {
-			httputil.Ctx(ctx).Unauthorized().WithError(err.Error()).Send()
+			httputil.Ctx(ctx).Unauthorized().
+				WithError(err).
+				Send()
 			ctx.Abort()
 			return
 		}

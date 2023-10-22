@@ -20,7 +20,7 @@ func (r *AuthRoutesController) NewRoutes(rg *gin.RouterGroup) {
 	auth.POST("/signin", r.authController.SignIn)
 	auth.POST("/welcome/:email", r.authController.Welcome)
 	auth.GET("/verify/:token", r.authController.VerifyEmail)
-	auth.GET("/refresh", r.authController.RefreshTokens)
+	auth.POST("/refresh", r.authController.RefreshTokens)
 	auth.POST("/forgot-password", r.authController.ForgotPassword)
 	auth.PATCH("/reset-password/:token", r.authController.ResetPassword)
 

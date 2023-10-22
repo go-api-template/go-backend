@@ -30,6 +30,12 @@ definitions:
         type: integer
       expires_in:
         type: integer
+      refresh_expires_at:
+        type: integer
+      refresh_expires_in:
+        type: integer
+      refresh_token:
+        type: string
       token_type:
         type: string
     type: object
@@ -67,6 +73,7 @@ definitions:
     description: User email model used for password reset
     properties:
       email:
+        example: my-email@gmail.com
         type: string
     required:
     - email
@@ -74,21 +81,25 @@ definitions:
   models.UserPasswordConfirmation:
     description: User password confirmation model used for password reset
     properties:
+      confirm:
+        example: strong-password
+        type: string
       password:
+        example: strong-password
         minLength: 8
         type: string
-      password_confirm:
-        type: string
     required:
+    - confirm
     - password
-    - password_confirm
     type: object
   models.UserSignIn:
     description: User sign in model used for authentication
     properties:
       email:
+        example: my-email@gmail.com
         type: string
       password:
+        example: strong-password
         type: string
     required:
     - email
@@ -115,6 +126,14 @@ definitions:
     - password
     - password_confirm
     type: object
+  models.UserToken:
+    description: Token used for refresh
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
 info:
   contact: {}
 paths:
@@ -133,8 +152,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/httputil.Success'
         "400":
@@ -167,6 +186,7 @@ paths:
       description: Send a reset token by email
       parameters:
       - description: User email
+        format: email
         in: body
         name: email
         required: true
@@ -191,15 +211,22 @@ paths:
       tags:
       - auth
   /auth/refresh:
-    get:
+    post:
       consumes:
       - application/json
-      description: Refresh the access token
+      description: Refresh the access token using the refresh token
+      parameters:
+      - description: Refresh token
+        in: body
+        name: token
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserToken'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/models.AccessToken'
         "400":
@@ -223,7 +250,7 @@ paths:
       - application/json
       description: Reset the user password
       parameters:
-      - description: New password
+      - description: New password with confirmation
         in: body
         name: password
         required: true
@@ -293,7 +320,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Sign out current user
+      description: Sign out the current user.
       produces:
       - application/json
       responses:
@@ -305,14 +332,14 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/httputil.Error'
-      summary: Sign out current user
+      summary: Sign out the current user
       tags:
       - auth
   /auth/signup:
     post:
       consumes:
       - application/json
-      description: Create a new user
+      description: Create a new user. The first user created is an admin.
       parameters:
       - description: User sign up
         in: body
@@ -350,7 +377,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Verify email address from verification code sent by email
+      description: Verify the email address from verification code sent by email
       parameters:
       - description: verification code sent by email
         in: path
@@ -372,7 +399,7 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/httputil.Error'
-      summary: Verify email address
+      summary: Verify the email address
       tags:
       - auth
   /auth/welcome/{email}:
@@ -384,10 +411,11 @@ paths:
       parameters:
       - description: User email
         format: email
-        in: path
+        in: body
         name: email
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/models.UserEmail'
       produces:
       - application/json
       responses:

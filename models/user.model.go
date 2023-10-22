@@ -50,23 +50,30 @@ type UserSignUp struct {
 //
 //	@description	User sign in model used for authentication
 type UserSignIn struct {
-	Email    string `json:"email"     binding:"required"`
-	Password string `json:"password"  binding:"required"`
+	Email    string `json:"email"     binding:"required" example:"my-email@gmail.com"`
+	Password string `json:"password"  binding:"required" example:"strong-password"`
 }
 
 // UserEmail model
 //
 //	@description	User email model used for password reset
 type UserEmail struct {
-	Email string `json:"email" binding:"required"`
+	Email string `json:"email" binding:"required" example:"my-email@gmail.com"`
+}
+
+// USerToken model
+//
+//	@description	Token used for refresh
+type UserToken struct {
+	Token string `json:"token" binding:"required"`
 }
 
 // UserPasswordConfirmation model
 //
 //	@description	User password confirmation model used for password reset
 type UserPasswordConfirmation struct {
-	Password        string `json:"password"         binding:"required,min=8"`
-	PasswordConfirm string `json:"password_confirm" binding:"required"`
+	Password string `json:"password" binding:"required,min=8" example:"strong-password"`
+	Confirm  string `json:"confirm"  binding:"required" example:"strong-password"`
 }
 
 // SetResetToken sets the reset token

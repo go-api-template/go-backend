@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-api-template/go-backend/models"
@@ -11,6 +12,7 @@ import (
 	"github.com/go-api-template/go-backend/services"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -52,7 +54,7 @@ func NewAuthController(userService services.UserService, mailerService services.
 // SignUp godoc
 //
 //	@Summary		Create a new user
-//	@Description	Create a new user
+//	@Description	Create a new user. The first user created is an admin.
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
@@ -161,43 +163,27 @@ func (c *AuthControllerImpl) SignIn(ctx *gin.Context) {
 }
 
 func (c *AuthControllerImpl) signin(ctx *gin.Context, user *models.User) {
-	now := time.Now().UTC()
 
-	// Generate access tokens
-	accessToken, err := utils.CreateToken(now, config.Config.Tokens.Access.MaxAge, user, config.Config.Tokens.Access.PrivateKey)
+	// Generate the tokens
+	tokens, err := c.generateTokens(user)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
-	accessTokenExpiresIn := config.Config.Tokens.Access.MaxAge * 60
-	accessTokenExpiresAt := now.Add(time.Duration(config.Config.Tokens.Access.MaxAge) * time.Minute)
-
-	// Generate refresh tokens
-	refreshToken, err := utils.CreateToken(now, config.Config.Tokens.Refresh.MaxAge, user, config.Config.Tokens.Refresh.PrivateKey)
-	if err != nil {
-		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
-		return
-	}
-	refreshTokenExpiresIn := config.Config.Tokens.Refresh.MaxAge * 60
 
 	// Set the cookies
-	ctx.SetCookie(CtxAccessToken, accessToken, accessTokenExpiresIn, "/", "localhost", false, true)
-	ctx.SetCookie(CtxRefreshToken, refreshToken, refreshTokenExpiresIn, "/", "localhost", false, true)
-	ctx.SetCookie(CtxLoggedIn, "true", accessTokenExpiresIn, "/", "localhost", false, false)
+	ctx.SetCookie(CtxAccessToken, tokens.AccessToken, tokens.ExpiresIn, "/", "localhost", false, true)
+	ctx.SetCookie(CtxRefreshToken, tokens.RefreshToken, tokens.RefreshExpiresIn, "/", "localhost", false, true)
+	ctx.SetCookie(CtxLoggedIn, "true", tokens.ExpiresIn, "/", "localhost", false, false)
 
 	// Send the response
-	httputil.Ctx(ctx).Created().SendRaw(&models.AccessToken{
-		AccessToken: accessToken,
-		ExpiresIn:   accessTokenExpiresIn,
-		ExpiresAt:   accessTokenExpiresAt.Unix(),
-		TokenType:   "Bearer",
-	})
+	httputil.Ctx(ctx).Created().SendRaw(&tokens)
 }
 
 // SignOut godoc
 //
-//	@Summary		Sign out current user
-//	@Description	Sign out current user
+//	@Summary		Sign out the current user
+//	@Description	Sign out the current user.
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
@@ -237,19 +223,21 @@ func (c *AuthControllerImpl) signOut(ctx *gin.Context, user *models.User) {
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			email	path		string	true	"User email"	Format(email)
+//	@Param			email	body		models.UserEmail	true	"User email"	Format(email)
 //	@Success		201		{object}	models.User
 //	@Failure		400		{object}	httputil.Error
 //	@Failure		403		{object}	httputil.Error
 //	@Failure		404		{object}	httputil.Error
 //	@Router			/auth/welcome/{email} [post]
 func (c *AuthControllerImpl) Welcome(ctx *gin.Context) {
-
-	// Get the user email passed in the url
-	email := ctx.Params.ByName("email")
+	var payload models.UserEmail
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		return
+	}
 
 	// Get the user from the database by email
-	user, err := c.userService.FindByEmail(email)
+	user, err := c.userService.FindByEmail(payload.Email)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
@@ -292,8 +280,8 @@ func (c *AuthControllerImpl) Welcome(ctx *gin.Context) {
 
 // VerifyEmail godoc
 //
-//	@Summary		Verify email address
-//	@Description	Verify email address from verification code sent by email
+//	@Summary		Verify the email address
+//	@Description	Verify the email address from verification code sent by email
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
@@ -339,36 +327,50 @@ func (c *AuthControllerImpl) VerifyEmail(ctx *gin.Context) {
 // RefreshTokens godoc
 //
 //	@Summary		Refresh the access token
-//	@Description	Refresh the access token
+//	@Description	Refresh the access token using the refresh token
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	models.AccessToken
-//	@Failure		400	{object}	httputil.Error
-//	@Failure		403	{object}	httputil.Error
-//	@Failure		404	{object}	httputil.Error
-//	@Router			/auth/refresh [get]
+//	@Param			token	body		models.UserToken	true	"Refresh token"
+//	@Success		201		{object}	models.AccessToken
+//	@Failure		400		{object}	httputil.Error
+//	@Failure		403		{object}	httputil.Error
+//	@Failure		404		{object}	httputil.Error
+//	@Router			/auth/refresh [post]
 func (c *AuthControllerImpl) RefreshTokens(ctx *gin.Context) {
-	now := time.Now().UTC()
+	var payload *models.UserToken
 
 	// Get the refresh token from the cookie
+	// if not found, get it from the body
 	token, err := ctx.Cookie(CtxRefreshToken)
-	if err != nil {
-		httputil.Ctx(ctx).Forbidden().
-			WithCode("token_error").
-			WithDescription("could not refresh access token").
-			Send()
+	if token != "" {
+		payload = &models.UserToken{Token: token}
+	} else if errors.Is(err, http.ErrNoCookie) {
+		// Get the refresh token from the body
+		if err := ctx.ShouldBindJSON(&payload); err != nil {
+			httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+			return
+		}
+	} else {
+		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
 	// Validate the refresh token
-	subscriber, err := utils.ValidateToken(token, config.Config.Tokens.Refresh.PublicKey)
+	claims, err := utils.ValidateToken(token, config.Config.Tokens.Refresh.PublicKey)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
-	// Convert the subscriber to a UUID
+	// Get the subscriber from the refresh token
+	subscriber, err := claims.GetSubject()
+	if err != nil {
+		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		return
+	}
+
+	// Get the user UUID from the refresh token
 	subscriberUUID, err := uuid.Parse(fmt.Sprint(subscriber))
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().
@@ -393,25 +395,19 @@ func (c *AuthControllerImpl) RefreshTokens(ctx *gin.Context) {
 	}
 
 	// Generate a new access token
-	accessToken, err := utils.CreateToken(now, config.Config.Tokens.Access.MaxAge, user, config.Config.Tokens.Access.PrivateKey)
+	tokens, err := c.generateTokens(user)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
-	accessTokenExpiresIn := config.Config.Tokens.Access.MaxAge * 60
-	accessTokenExpiresAt := now.Add(time.Duration(config.Config.Tokens.Access.MaxAge) * time.Minute)
 
-	// Set the cookie
-	ctx.SetCookie(CtxAccessToken, accessToken, accessTokenExpiresIn, "/", "localhost", false, true)
-	ctx.SetCookie(CtxLoggedIn, "true", accessTokenExpiresIn, "/", "localhost", false, false)
+	// Set the cookies
+	ctx.SetCookie(CtxAccessToken, tokens.AccessToken, tokens.ExpiresIn, "/", "localhost", false, true)
+	ctx.SetCookie(CtxRefreshToken, tokens.RefreshToken, tokens.RefreshExpiresIn, "/", "localhost", false, true)
+	ctx.SetCookie(CtxLoggedIn, "true", tokens.ExpiresIn, "/", "localhost", false, false)
 
 	// Send the response
-	httputil.Ctx(ctx).Ok().SendRaw(&models.AccessToken{
-		AccessToken: accessToken,
-		ExpiresIn:   accessTokenExpiresIn,
-		ExpiresAt:   accessTokenExpiresAt.Unix(),
-		TokenType:   "Bearer",
-	})
+	httputil.Ctx(ctx).Created().SendRaw(&tokens)
 }
 
 // ForgotPassword godoc
@@ -421,20 +417,20 @@ func (c *AuthControllerImpl) RefreshTokens(ctx *gin.Context) {
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			email	body		models.UserEmail	true	"User email"
+//	@Param			email	body		models.UserEmail	true	"User email"	Format(email)
 //	@Success		201		{object}	httputil.Success
 //	@Failure		400		{object}	httputil.Error
 //	@Failure		401		{object}	httputil.Error
 //	@Router			/auth/forgot-password/{email} [post]
 func (c *AuthControllerImpl) ForgotPassword(ctx *gin.Context) {
-	var email models.UserEmail
-	if err := ctx.ShouldBindJSON(&email); err != nil {
+	var payload models.UserEmail
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
 	// Get the user from the database by email
-	user, err := c.userService.FindByEmail(email.Email)
+	user, err := c.userService.FindByEmail(payload.Email)
 	if err != nil {
 		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
@@ -493,7 +489,7 @@ func (c *AuthControllerImpl) ForgotPassword(ctx *gin.Context) {
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			password	body		models.UserPasswordConfirmation	true	"New password"
+//	@Param			password	body		models.UserPasswordConfirmation	true	"New password with confirmation"
 //	@Success		200			{object}	httputil.Success
 //	@Failure		400			{object}	httputil.Error
 //	@Failure		401			{object}	httputil.Error
@@ -514,7 +510,7 @@ func (c *AuthControllerImpl) ResetPassword(ctx *gin.Context) {
 	}
 
 	// Check if the passwords match
-	if payload.Password != payload.PasswordConfirm {
+	if payload.Password != payload.Confirm {
 		httputil.Ctx(ctx).PreconditionFailed().
 			WithCode("password_error").
 			WithDescription("passwords do not match").
@@ -566,7 +562,7 @@ func (c *AuthControllerImpl) ResetPassword(ctx *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			password	body		models.UserPasswordConfirmation	true	"New password"
-//	@Success		200			{object}	httputil.Success
+//	@Success		201			{object}	httputil.Success
 //	@Failure		400			{object}	httputil.Error
 //	@Failure		401			{object}	httputil.Error
 //	@Failure		403			{object}	httputil.Error
@@ -594,7 +590,7 @@ func (c *AuthControllerImpl) ChangePassword(ctx *gin.Context) {
 	}
 
 	// Check if the passwords match
-	if payload.Password != payload.PasswordConfirm {
+	if payload.Password != payload.Confirm {
 		httputil.Ctx(ctx).PreconditionFailed().
 			WithCode("password_error").
 			WithDescription("passwords do not match").
@@ -618,4 +614,38 @@ func (c *AuthControllerImpl) ChangePassword(ctx *gin.Context) {
 
 	// Sign in the user
 	c.signin(ctx, user)
+}
+
+func (c *AuthControllerImpl) generateTokens(user *models.User) (*models.AccessToken, error) {
+
+	now := time.Now().UTC()
+	issuer := config.Config.App.Name
+	subject := user.ID.String()
+	audience := user.Email
+
+	// Generate access tokens
+	accessToken, err := utils.CreateToken(now, config.Config.Tokens.Access.MaxAge, issuer, subject, audience, config.Config.Tokens.Access.PrivateKey)
+	if err != nil {
+		return nil, err
+	}
+	accessTokenExpiresIn := config.Config.Tokens.Access.MaxAge * 60
+	accessTokenExpiresAt := now.Add(time.Duration(config.Config.Tokens.Access.MaxAge) * time.Minute)
+
+	// Generate refresh tokens
+	refreshToken, err := utils.CreateToken(now, config.Config.Tokens.Refresh.MaxAge, issuer, subject, audience, config.Config.Tokens.Refresh.PrivateKey)
+	if err != nil {
+		return nil, err
+	}
+	refreshTokenExpiresIn := config.Config.Tokens.Refresh.MaxAge * 60
+	refreshTokenExpiresAt := now.Add(time.Duration(config.Config.Tokens.Refresh.MaxAge) * time.Minute)
+
+	return &models.AccessToken{
+		AccessToken:      accessToken,
+		ExpiresIn:        accessTokenExpiresIn,
+		ExpiresAt:        accessTokenExpiresAt.Unix(),
+		TokenType:        "Bearer",
+		RefreshToken:     refreshToken,
+		RefreshExpiresIn: refreshTokenExpiresIn,
+		RefreshExpiresAt: refreshTokenExpiresAt.Unix(),
+	}, nil
 }

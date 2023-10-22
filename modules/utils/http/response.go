@@ -1,6 +1,7 @@
 package httputil
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -26,10 +27,10 @@ type Success struct {
 // It is used when the response is an error
 type Error struct {
 	r           *Response
-	Code        string `json:"code,omitempty" example:"server_code"`
-	Description string `json:"description,omitempty" example:"a server message"`
-	Errors      []any  `json:"errors,omitempty"`
-	Data        any    `json:"data,omitempty"`
+	Code        string  `json:"code,omitempty" example:"server_code"`
+	Description string  `json:"description,omitempty" example:"a server message"`
+	Errors      []error `json:"errors,omitempty"`
+	Data        any     `json:"data,omitempty"`
 }
 
 // Ctx is a constructor for Response
@@ -91,13 +92,13 @@ func (e *Error) WithDescription(description string) *Error {
 }
 
 // WithErrors set the errors of the response
-func (e *Error) WithErrors(errors []any) *Error {
+func (e *Error) WithErrors(errors []error) *Error {
 	e.Errors = errors
 	return e
 }
 
 // WithError add an error to the errors of the response
-func (e *Error) WithError(err any) *Error {
+func (e *Error) WithError(err error) *Error {
 	e.Errors = append(e.Errors, err)
 	return e
 }
@@ -111,6 +112,34 @@ func (e *Error) WithData(data *any) *Error {
 // Send is used to send the response
 func (e *Error) Send() {
 	e.r.ctx.JSON(e.r.status, e)
+}
+
+// MarshalJSON is used to marshal the Error struct
+// With this, we can add the errors to the response
+func (e *Error) MarshalJSON() ([]byte, error) {
+	// Define an alias for the error struct
+	// with Errors as []string
+	type ErrorAlias struct {
+		Code        string   `json:"code,omitempty"`
+		Description string   `json:"description,omitempty"`
+		Errors      []string `json:"errors,omitempty"`
+	}
+
+	// Create an instance of the alias
+	a := &ErrorAlias{
+		Code:        e.Code,
+		Description: e.Description,
+	}
+
+	// Add the errors to the alias
+	if e.Errors != nil {
+		for _, err := range e.Errors {
+			a.Errors = append(a.Errors, err.Error())
+		}
+	}
+
+	// Marshal the alias
+	return json.Marshal(a)
 }
 
 // Ok Status 200

@@ -87,7 +87,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "",
+							"raw": "{\r\n    \"email\": \"{{email}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -95,20 +95,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/auth/welcome/:email",
+							"raw": "{{host}}/auth/welcome",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"auth",
-								"welcome",
-								":email"
-							],
-							"variable": [
-								{
-									"key": "email",
-									"value": "{{email}}"
-								}
+								"welcome"
 							]
 						}
 					},
@@ -157,15 +150,17 @@
 							"script": {
 								"exec": [
 									"pm.test(\"Vérification du code de retour\", () => {\r",
-									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.status(201);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
 									"const json = pm.response.json();\r",
 									"pm.collectionVariables.set(\"access_token\", json.access_token);\r",
+									"pm.collectionVariables.set(\"refresh_token\", json.refresh_token);\r",
 									"\r",
 									"pm.test(\"Récupération de token d'accès\", () => {\r",
 									"    pm.expect(pm.collectionVariables.get(\"access_token\")).to.be.not.empty;\r",
+									"    pm.expect(pm.collectionVariables.get(\"refresh_token\")).to.be.not.empty;\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -205,30 +200,29 @@
 							"script": {
 								"exec": [
 									"pm.test(\"Vérification du code de retour\", () => {\r",
-									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.status(201);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
 									"const json = pm.response.json();\r",
 									"pm.collectionVariables.set(\"access_token\", json.access_token);\r",
+									"pm.collectionVariables.set(\"refresh_token\", json.refresh_token);\r",
 									"\r",
 									"pm.test(\"Récupération de token d'accès\", () => {\r",
 									"    pm.expect(pm.collectionVariables.get(\"access_token\")).to.be.not.empty;\r",
+									"    pm.expect(pm.collectionVariables.get(\"refresh_token\")).to.be.not.empty;\r",
 									"});"
 								],
 								"type": "text/javascript"
 							}
 						}
 					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "",
+							"raw": "{\r\n    \"token\": \"{{refresh_token}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -387,8 +381,17 @@
 							"script": {
 								"exec": [
 									"pm.test(\"Vérification du code de retour\", () => {\r",
-									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.status(201);\r",
 									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const json = pm.response.json();\r",
+									"pm.collectionVariables.set(\"access_token\", json.access_token);\r",
+									"pm.collectionVariables.set(\"refresh_token\", json.refresh_token);\r",
+									"\r",
+									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"    pm.expect(pm.collectionVariables.get(\"access_token\")).to.be.not.empty;\r",
+									"    pm.expect(pm.collectionVariables.get(\"refresh_token\")).to.be.not.empty;\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -400,7 +403,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirm\": \"{{password}}\"\r\n}",
+							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"confirm\": \"{{password}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -981,6 +984,10 @@
 		},
 		{
 			"key": "user_id",
+			"value": ""
+		},
+		{
+			"key": "refresh_token",
 			"value": ""
 		}
 	]
