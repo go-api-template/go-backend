@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-api-template/go-backend/models"
 	"github.com/go-api-template/go-backend/modules/config"
-	"github.com/go-api-template/go-backend/modules/utils"
-	httputil "github.com/go-api-template/go-backend/modules/utils/http"
+	api "github.com/go-api-template/go-backend/modules/utils/api"
+	"github.com/go-api-template/go-backend/modules/utils/token"
 	"github.com/go-api-template/go-backend/services"
 	"github.com/google/uuid"
 	"strings"
@@ -67,7 +67,7 @@ func (a Authorizer) contextUser(ctx *gin.Context) (*models.User, error) {
 	}
 
 	// Validate the access token
-	claims, err := utils.ValidateToken(accessToken, config.Config.Tokens.Access.PublicKey)
+	claims, err := token.Validate(accessToken, config.Config.Tokens.Access.PublicKey)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (a Authorizer) contextUser(ctx *gin.Context) (*models.User, error) {
 	// Get the subscriber from the refresh token
 	subscriber, err := claims.GetSubject()
 	if err != nil {
-		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		api.Ctx(ctx).BadRequest().WithError(err).Send()
 		return nil, err
 	}
 
@@ -101,7 +101,7 @@ func ContextUser() gin.HandlerFunc {
 		// Get the user from the context
 		user, err := authorizer.contextUser(ctx)
 		if err != nil {
-			httputil.Ctx(ctx).Unauthorized().WithError(err).Send()
+			api.Ctx(ctx).Unauthorized().WithError(err).Send()
 			ctx.Abort()
 			return
 		}
@@ -133,7 +133,7 @@ func VerifiedUser() gin.HandlerFunc {
 		// Get the user from the context
 		user, err := authorizer.contextUser(ctx)
 		if err != nil {
-			httputil.Ctx(ctx).Unauthorized().
+			api.Ctx(ctx).Unauthorized().
 				WithCode("user_error").
 				WithDescription("You are not logged in").
 				WithError(err).
@@ -144,7 +144,7 @@ func VerifiedUser() gin.HandlerFunc {
 
 		// Check if the user exists
 		if user == nil {
-			httputil.Ctx(ctx).Unauthorized().
+			api.Ctx(ctx).Unauthorized().
 				WithCode("user_error").
 				WithDescription("User not found").
 				Send()
@@ -154,7 +154,7 @@ func VerifiedUser() gin.HandlerFunc {
 
 		// Check if the user is verified
 		if !user.Verified {
-			httputil.Ctx(ctx).Unauthorized().
+			api.Ctx(ctx).Unauthorized().
 				WithCode("user_error").
 				WithDescription("Your account is not verified").
 				Send()
@@ -173,7 +173,7 @@ func AdminUser() gin.HandlerFunc {
 		// Get the user from the context
 		user, err := authorizer.contextUser(ctx)
 		if err != nil {
-			httputil.Ctx(ctx).Unauthorized().
+			api.Ctx(ctx).Unauthorized().
 				WithError(err).
 				Send()
 			ctx.Abort()
@@ -182,7 +182,7 @@ func AdminUser() gin.HandlerFunc {
 
 		// Check if the user exists
 		if user == nil {
-			httputil.Ctx(ctx).Unauthorized().
+			api.Ctx(ctx).Unauthorized().
 				WithCode("user_error").
 				WithDescription("User not found").
 				Send()
@@ -192,7 +192,7 @@ func AdminUser() gin.HandlerFunc {
 
 		// Check if the user is an admin
 		if !user.Role.IsAdmin() {
-			httputil.Ctx(ctx).Unauthorized().
+			api.Ctx(ctx).Unauthorized().
 				WithCode("user_error").
 				WithDescription("You are not an admin").
 				Send()

@@ -16,16 +16,15 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(201);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"const json = pm.response.json();\r",
-									"pm.collectionVariables.set(\"verification_token\", json.verification_token);\r",
-									"\r",
-									"pm.test(\"Récupération du code de vérification\", () => {\r",
-									"    pm.expect(pm.collectionVariables.get(\"verification_token\")).to.be.not.empty;\r",
+									"pm.test(\"Getting the user ID\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"user_id\", json.id);\r",
+									"    pm.expect(pm.collectionVariables.get(\"user_id\")).to.be.not.empty;\r",
 									"});\r",
 									""
 								],
@@ -38,7 +37,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"first_name\": \"John\",\r\n    \"last_name\": \"Doe\",\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirm\": \"{{password}}\"\r\n}",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -65,15 +64,14 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(201);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"const json = pm.response.json();\r",
-									"pm.collectionVariables.set(\"verification_token\", json.verification_token);\r",
-									"\r",
-									"pm.test(\"Récupération du code de vérification\", () => {\r",
+									"pm.test(\"Getting the verification code\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"verification_token\", json.verification_token);\r",
 									"    pm.expect(pm.collectionVariables.get(\"verification_token\")).to.be.not.empty;\r",
 									"});\r",
 									""
@@ -114,12 +112,16 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(200);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"pm.collectionVariables.set(\"verification_token\", \"\");"
+									"pm.test(\"Setting the verification code\", () => {\r",
+									"    pm.collectionVariables.set(\"verification_token\", \"\");\r",
+									"    pm.expect(pm.collectionVariables.get(\"verification_token\")).to.be.empty;\r",
+									"});\r",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -149,16 +151,15 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(201);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"const json = pm.response.json();\r",
-									"pm.collectionVariables.set(\"access_token\", json.access_token);\r",
-									"pm.collectionVariables.set(\"refresh_token\", json.refresh_token);\r",
-									"\r",
-									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"pm.test(\"Getting tokens\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"access_token\", json.access_token);\r",
+									"    pm.collectionVariables.set(\"refresh_token\", json.refresh_token);\r",
 									"    pm.expect(pm.collectionVariables.get(\"access_token\")).to.be.not.empty;\r",
 									"    pm.expect(pm.collectionVariables.get(\"refresh_token\")).to.be.not.empty;\r",
 									"});"
@@ -199,16 +200,15 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(201);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"const json = pm.response.json();\r",
-									"pm.collectionVariables.set(\"access_token\", json.access_token);\r",
-									"pm.collectionVariables.set(\"refresh_token\", json.refresh_token);\r",
-									"\r",
-									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"pm.test(\"Getting tokens\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"access_token\", json.access_token);\r",
+									"    pm.collectionVariables.set(\"refresh_token\", json.refresh_token);\r",
 									"    pm.expect(pm.collectionVariables.get(\"access_token\")).to.be.not.empty;\r",
 									"    pm.expect(pm.collectionVariables.get(\"refresh_token\")).to.be.not.empty;\r",
 									"});"
@@ -249,7 +249,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(200);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
@@ -284,15 +284,14 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(201);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"const json = pm.response.json();\r",
-									"pm.collectionVariables.set(\"reset_token\", json.data);\r",
-									"\r",
-									"pm.test(\"Récupération du token\", () => {\r",
+									"pm.test(\"Getting token\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"reset_token\", json.data);\r",
 									"    pm.expect(pm.collectionVariables.get(\"reset_token\")).to.be.not.empty;\r",
 									"});"
 								],
@@ -332,7 +331,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(200);\r",
 									"    pm.response.to.be.json;\r",
 									"});"
@@ -346,7 +345,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirm\": \"{{password}}\"\r\n}",
+							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -380,16 +379,15 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(201);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"const json = pm.response.json();\r",
-									"pm.collectionVariables.set(\"access_token\", json.access_token);\r",
-									"pm.collectionVariables.set(\"refresh_token\", json.refresh_token);\r",
-									"\r",
-									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"pm.test(\"Getting tokens\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"access_token\", json.access_token);\r",
+									"    pm.collectionVariables.set(\"refresh_token\", json.refresh_token);\r",
 									"    pm.expect(pm.collectionVariables.get(\"access_token\")).to.be.not.empty;\r",
 									"    pm.expect(pm.collectionVariables.get(\"refresh_token\")).to.be.not.empty;\r",
 									"});"
@@ -403,7 +401,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"confirm\": \"{{password}}\"\r\n}",
+							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -426,7 +424,7 @@
 			]
 		},
 		{
-			"name": "User",
+			"name": "Users",
 			"item": [
 				{
 					"name": "Get Me",
@@ -435,15 +433,14 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(200);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"const json = pm.response.json();\r",
-									"pm.collectionVariables.set(\"user_id\", json.id);\r",
-									"\r",
-									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"pm.test(\"Getting the user ID\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"user_id\", json.id);\r",
 									"    pm.expect(pm.collectionVariables.get(\"user_id\")).to.be.not.empty;\r",
 									"});\r",
 									""
@@ -466,12 +463,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/user/me",
+							"raw": "{{host}}/users/me",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"me"
 							]
 						}
@@ -485,15 +482,14 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(200);\r",
 									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
-									"const json = pm.response.json();\r",
-									"pm.collectionVariables.set(\"user_id\", json.id);\r",
-									"\r",
-									"pm.test(\"Récupération de token d'accès\", () => {\r",
+									"pm.test(\"Getting the user ID\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"user_id\", json.id);\r",
 									"    pm.expect(pm.collectionVariables.get(\"user_id\")).to.be.not.empty;\r",
 									"});\r",
 									""
@@ -517,7 +513,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"The John Doe\"\r\n}",
+							"raw": "{\r\n    \"name\": \"The John Doe\",\r\n    \"first_name\": \"John\",\r\n    \"last_name\": \"Doe\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -525,12 +521,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/user/me",
+							"raw": "{{host}}/users/me",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"me"
 							]
 						}
@@ -544,9 +540,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
+									"pm.test(\"Checking the return code\", () => {\r",
 									"    pm.response.to.have.status(204);\r",
-									"    pm.response.to.be.json;\r",
 									"});\r",
 									"\r",
 									"pm.collectionVariables.set(\"access_token\", \"\");\r",
@@ -579,12 +574,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/user/me",
+							"raw": "{{host}}/users/me",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"me"
 							]
 						}
@@ -592,164 +587,21 @@
 					"response": []
 				},
 				{
-					"name": "ById",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    pm.response.to.be.json;\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{host}}/user/{{user_id}}",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"user",
-								"{{user_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    pm.response.to.be.json;\r",
-									"});\r",
-									"\r",
-									"const json = pm.response.json();\r",
-									"pm.collectionVariables.set(\"user_id\", json.id);\r",
-									"\r",
-									"pm.test(\"Récupération de token d'accès\", () => {\r",
-									"    pm.expect(pm.collectionVariables.get(\"user_id\")).to.be.not.empty;\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"The John Doe\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{host}}/user/{{user_id}}",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"user",
-								"{{user_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Vérification du code de retour\", () => {\r",
-									"    pm.response.to.have.status(204);\r",
-									"    pm.response.to.be.json;\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{host}}/user/{{user_id}}",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"user",
-								"{{user_id}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Users",
-			"item": [
-				{
 					"name": "All",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Checking the return code\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -801,6 +653,195 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "ById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Checking the return code\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Getting the user ID\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"user_id\", json.id);\r",
+									"    pm.expect(pm.collectionVariables.get(\"user_id\")).to.be.not.empty;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/{{user_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Checking the return code\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Getting the user ID\", () => {\r",
+									"    const json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"user_id\", json.id);\r",
+									"    pm.expect(pm.collectionVariables.get(\"user_id\")).to.be.not.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"The John Doe\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/{{user_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Checking the return code\", () => {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"access_token\", \"\");\r",
+									"pm.collectionVariables.set(\"user_id\", \"\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/{{user_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{access_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},
@@ -811,7 +852,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Vérification du code de retour\", () => {\r",
+							"pm.test(\"Checking the return code\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
 							"    pm.response.to.be.json;\r",
 							"});"
@@ -854,7 +895,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Vérification du code de retour\", () => {\r",
+							"pm.test(\"Checking the return code\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
 							"    pm.response.to.be.json;\r",
 							"});"
@@ -897,7 +938,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Vérification du code de retour\", () => {\r",
+							"pm.test(\"Checking the return code\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
 							"    pm.response.to.be.json;\r",
 							"});"
@@ -956,39 +997,9 @@
 	],
 	"variable": [
 		{
-			"key": "email",
-			"value": "johndoe@gmail.com",
-			"type": "string"
-		},
-		{
-			"key": "password",
-			"value": "password123",
-			"type": "string"
-		},
-		{
 			"key": "host",
 			"value": "localhost:8080/v1",
 			"type": "string"
-		},
-		{
-			"key": "access_token",
-			"value": ""
-		},
-		{
-			"key": "reset_token",
-			"value": ""
-		},
-		{
-			"key": "verification_token",
-			"value": ""
-		},
-		{
-			"key": "user_id",
-			"value": ""
-		},
-		{
-			"key": "refresh_token",
-			"value": ""
 		}
 	]
 }

@@ -20,7 +20,7 @@ require (
 	github.com/google/uuid v1.3.1
 	github.com/gookit/color v1.5.4
 	github.com/jackc/pgx/v5 v5.4.3
-	github.com/mattn/go-isatty v0.0.19
+	github.com/mattn/go-isatty v0.0.20
 	github.com/microcosm-cc/bluemonday v1.0.26
 	github.com/rs/zerolog v1.31.0
 	github.com/spf13/cobra v1.7.0
@@ -54,7 +54,7 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/golang-module/carbon/v2 v2.2.10 // indirect
+	github.com/golang-module/carbon/v2 v2.2.11 // indirect
 	github.com/golobby/env/v2 v2.2.4 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

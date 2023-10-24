@@ -39,11 +39,9 @@ type User struct {
 //
 //	@description	User sign up model used for registration
 type UserSignUp struct {
-	Email           string `json:"email"            binding:"required"`
-	FirstName       string `json:"first_name"       binding:"required"`
-	LastName        string `json:"last_name"        binding:"required"`
-	Password        string `json:"password"         binding:"required,min=8"`
-	PasswordConfirm string `json:"password_confirm" binding:"required"`
+	Email                string `json:"email"                 binding:"required"`
+	Password             string `json:"password"              binding:"required,min=8"`
+	PasswordConfirmation string `json:"password_confirmation" binding:"required"`
 }
 
 // UserSignIn model
@@ -72,8 +70,8 @@ type UserToken struct {
 //
 //	@description	User password confirmation model used for password reset
 type UserPasswordConfirmation struct {
-	Password string `json:"password" binding:"required,min=8" example:"strong-password"`
-	Confirm  string `json:"confirm"  binding:"required" example:"strong-password"`
+	Password             string `json:"password" binding:"required,min=8" example:"strong-password"`
+	PasswordConfirmation string `json:"password_confirmation"  binding:"required" example:"strong-password"`
 }
 
 // SetResetToken sets the reset token

@@ -2,7 +2,7 @@ package common_routes
 
 import (
 	"github.com/gin-gonic/gin"
-	httputil "github.com/go-api-template/go-backend/modules/utils/http"
+	api "github.com/go-api-template/go-backend/modules/utils/api"
 )
 
 type PingRoutesController struct{}
@@ -13,7 +13,7 @@ func NewPingRoutesController() PingRoutesController {
 
 func (r *PingRoutesController) NewRoutes(rg *gin.RouterGroup) {
 	rg.GET("/ping", func(ctx *gin.Context) {
-		httputil.Ctx(ctx).Ok().SendRaw(gin.H{
+		api.Ctx(ctx).Ok().SendRaw(gin.H{
 			"message": "pong",
 		})
 	})

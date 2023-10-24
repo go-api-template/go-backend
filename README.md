@@ -1,20 +1,32 @@
 # go-backend
 
-todo: write a description here
-todo: idéee de readme -> https://github.com/irahardianto/service-pattern-go
+This is a template for a RESTful API written in Go.
+
 
 ## Installation
 
-Clone the repository
+**Clone the repository**
 
 ```bash
 git clone https://github.com/go-api-template/go-backend
 ```
 
-Setup dependencies
+**Setup dependencies**
 
 ```bash
 go mod download
+```
+
+**Get the list of all predefined tasks**
+
+```bash
+task --list
+```
+
+**Build all (docker images & go) then run the application**
+
+```bash
+task build run
 ```
 
 ## Introduction

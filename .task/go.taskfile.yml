@@ -116,3 +116,10 @@ tasks:
             - echo "Updating dependencies..."
             - go get -u ./...
         silent: true
+
+    run:
+        desc: "Run the go binary"
+        cmds:
+            - echo "Running..."
+            - go run main.go
+        silent: true

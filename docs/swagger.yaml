@@ -1,5 +1,5 @@
 definitions:
-  httputil.Error:
+  api.Error:
     properties:
       code:
         example: server_code
@@ -12,7 +12,7 @@ definitions:
         items: {}
         type: array
     type: object
-  httputil.Success:
+  api.Success:
     properties:
       code:
         example: server_code
@@ -22,7 +22,7 @@ definitions:
         example: a server message
         type: string
     type: object
-  models.AccessToken:
+  token.AccessToken:
     properties:
       access_token:
         type: string
@@ -155,27 +155,27 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "412":
           description: Precondition Failed
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Change the user password
       tags:
       - auth
@@ -198,15 +198,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Send a reset token by email
       tags:
       - auth
@@ -228,19 +228,19 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.AccessToken'
+            $ref: '#/definitions/token.AccessToken'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Refresh the access token
       tags:
       - auth
@@ -262,27 +262,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "412":
           description: Precondition Failed
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Reset the user password
       tags:
       - auth
@@ -304,15 +304,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.AccessToken'
+            $ref: '#/definitions/token.AccessToken'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Sign in a user
       tags:
       - auth
@@ -327,11 +327,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Sign out the current user
       tags:
       - auth
@@ -357,19 +357,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "412":
           description: Precondition Failed
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "502":
           description: Bad Gateway
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Create a new user
       tags:
       - auth
@@ -390,15 +390,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Verify the email address
       tags:
       - auth
@@ -426,15 +426,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Send welcome email
       tags:
       - auth
@@ -449,15 +449,15 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Delete the connected user
       tags:
       - user
@@ -482,15 +482,15 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Update information about the connected user
       tags:
       - user
@@ -532,11 +532,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Find all users
       tags:
       - user
@@ -557,19 +557,19 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Delete a user
       tags:
       - user
@@ -593,15 +593,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Find a user by id
       tags:
       - user
@@ -631,15 +631,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/httputil.Success'
+            $ref: '#/definitions/api.Success'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Update a user
       tags:
       - user
@@ -658,7 +658,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.Error'
+            $ref: '#/definitions/api.Error'
       summary: Get the current user
       tags:
       - user

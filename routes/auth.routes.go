@@ -15,17 +15,19 @@ func NewAuthRoutesController(authController controllers.AuthController) AuthRout
 }
 
 func (r *AuthRoutesController) NewRoutes(rg *gin.RouterGroup) {
+	// auth routes for public users
 	auth := rg.Group("/auth")
 	auth.POST("/signup", r.authController.SignUp)
 	auth.POST("/signin", r.authController.SignIn)
-	auth.POST("/welcome/:email", r.authController.Welcome)
+	auth.POST("/welcome", r.authController.Welcome)
 	auth.GET("/verify/:token", r.authController.VerifyEmail)
 	auth.POST("/refresh", r.authController.RefreshTokens)
 	auth.POST("/forgot-password", r.authController.ForgotPassword)
 	auth.PATCH("/reset-password/:token", r.authController.ResetPassword)
 
-	authSecured := auth.Group("").
+	// auth routes for authenticated and verified users
+	usersVerified := auth.Group("").
 		Use(middlewares.VerifiedUser())
-	authSecured.GET("/signout", r.authController.SignOut)
-	authSecured.POST("/change-password", r.authController.ChangePassword)
+	usersVerified.GET("/signout", r.authController.SignOut)
+	usersVerified.POST("/change-password", r.authController.ChangePassword)
 }

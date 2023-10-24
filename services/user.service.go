@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/go-api-template/go-backend/models"
 	"github.com/go-api-template/go-backend/modules/utils"
-	httputil "github.com/go-api-template/go-backend/modules/utils/http"
+	api "github.com/go-api-template/go-backend/modules/utils/api"
 	"github.com/go-faker/faker/v4"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -18,7 +18,7 @@ import (
 type UserService interface {
 	Create(user *models.UserSignUp) (*models.User, error)
 
-	FindAll(params httputil.Filter) ([]models.User, error)
+	FindAll(params api.Filter) ([]models.User, error)
 	FindById(id uuid.UUID) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
 	FindByVerificationToken(verificationToken string) (*models.User, error)
@@ -56,19 +56,11 @@ func (s *UserServiceImpl) Create(user *models.UserSignUp) (*models.User, error) 
 
 	// Create a new user from the SignUp input
 	newUser := &models.User{
-		//Name:             user.Name,
 		Email:             strings.ToLower(user.Email),
-		FirstName:         user.FirstName,
-		LastName:          user.LastName,
 		Password:          hashedPassword,
 		Role:              models.RoleUser,
 		VerificationToken: verificationCode,
 		Verified:          false,
-	}
-
-	// Set the name if it is empty
-	if len(newUser.Name) == 0 {
-		newUser.Name = newUser.FirstName + " " + newUser.LastName
 	}
 
 	// If this is the first user, set the role to admin
@@ -90,7 +82,7 @@ func (s *UserServiceImpl) Create(user *models.UserSignUp) (*models.User, error) 
 	return newUser, nil
 }
 
-func (s *UserServiceImpl) FindAll(params httputil.Filter) ([]models.User, error) {
+func (s *UserServiceImpl) FindAll(params api.Filter) ([]models.User, error) {
 	var users []models.User
 	result := s.gormDb.Scopes(params.Apply).Find(&users)
 
@@ -118,7 +110,7 @@ func (s *UserServiceImpl) FindById(id uuid.UUID) (*models.User, error) {
 
 func (s *UserServiceImpl) FindByEmail(email string) (*models.User, error) {
 	var user models.User
-	result := s.gormDb.Find(&user, "email = ?", email)
+	result := s.gormDb.Find(&user, "email = ?", strings.ToLower(email))
 
 	if result.Error != nil {
 		return nil, result.Error

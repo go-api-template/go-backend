@@ -1,4 +1,4 @@
-package utils
+package token
 
 import (
 	"encoding/base64"
@@ -7,14 +7,14 @@ import (
 	"time"
 )
 
-// CreateToken creates a new JWT token
+// Create creates a new JWT token
 // from: the time the token is created
 // ttl: time to live in minutes
 // issuer: the issuer of the token
 // subject: the subject of the token
 // audience: the audience of the token
 // privateKey: the private key to sign the token with
-func CreateToken(from time.Time, ttl int, issuer string, subject string, audience string, privateKey string) (string, error) {
+func Create(from time.Time, ttl int, issuer string, subject string, audience string, privateKey string) (string, error) {
 	// Private key used for signing the token
 	decodedPrivateKey, err := base64.StdEncoding.DecodeString(privateKey)
 	if err != nil {
@@ -44,7 +44,7 @@ func CreateToken(from time.Time, ttl int, issuer string, subject string, audienc
 	return token, nil
 }
 
-func ValidateToken(tokenString string, publicKey string) (jwt.Claims, error) {
+func Validate(tokenString string, publicKey string) (jwt.Claims, error) {
 	// Public key used for validating the token
 	decodedPublicKey, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {

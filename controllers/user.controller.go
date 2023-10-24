@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-api-template/go-backend/models"
 	"github.com/go-api-template/go-backend/modules/middlewares"
-	httputil "github.com/go-api-template/go-backend/modules/utils/http"
+	api "github.com/go-api-template/go-backend/modules/utils/api"
 	"github.com/go-api-template/go-backend/services"
 	"github.com/google/uuid"
 )
@@ -16,8 +16,8 @@ type UserController interface {
 	UpdateMe(ctx *gin.Context)
 	DeleteMe(ctx *gin.Context)
 
-	FindAll(ctx *gin.Context)
-	FindById(ctx *gin.Context)
+	List(ctx *gin.Context)
+	GetById(ctx *gin.Context)
 	Update(ctx *gin.Context)
 	Delete(ctx *gin.Context)
 }
@@ -43,18 +43,18 @@ func NewUserController(userService services.UserService) UserController {
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	models.User
-//	@Failure		400	{object}	httputil.Error
+//	@Failure		400	{object}	api.Error
 //	@Router			/users/me [get]
 func (c *UserControllerImpl) GetMe(ctx *gin.Context) {
 	// Get the user from the context
 	user, err := middlewares.GetUserFromContext(ctx)
 	if err != nil {
-		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		api.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
 	// Send the response
-	httputil.Ctx(ctx).Ok().SendRaw(user.Response())
+	api.Ctx(ctx).Ok().SendRaw(user.Response())
 }
 
 // UpdateMe godoc
@@ -66,22 +66,22 @@ func (c *UserControllerImpl) GetMe(ctx *gin.Context) {
 //	@Produce		json
 //	@Param			user	body		models.User	true	"User information"
 //	@Success		200		{object}	models.User
-//	@Failure		204		{object}	httputil.Success
-//	@Failure		400		{object}	httputil.Error
-//	@Failure		500		{object}	httputil.Error
+//	@Failure		204		{object}	api.Success
+//	@Failure		400		{object}	api.Error
+//	@Failure		500		{object}	api.Error
 //	@Router			/user/me [patch]
 func (c *UserControllerImpl) UpdateMe(ctx *gin.Context) {
 	// Get the user from the context
 	user, err := middlewares.GetUserFromContext(ctx)
 	if err != nil {
-		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		api.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
 	// Retrieve the user from the request body
 	var payload models.User
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		api.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
@@ -98,15 +98,15 @@ func (c *UserControllerImpl) UpdateMe(ctx *gin.Context) {
 
 	user, err = c.userService.Update(user.ID, user)
 	if err != nil {
-		httputil.Ctx(ctx).InternalServerError().WithError(err).Send()
+		api.Ctx(ctx).InternalServerError().WithError(err).Send()
 		return
 	}
 	if user == nil {
-		httputil.Ctx(ctx).NoContent().WithDescription("unknown user").Send()
+		api.Ctx(ctx).NoContent().WithDescription("unknown user").Send()
 		return
 	}
 
-	httputil.Ctx(ctx).Ok().SendRaw(user)
+	api.Ctx(ctx).Ok().SendRaw(user)
 }
 
 // DeleteMe godoc
@@ -116,26 +116,26 @@ func (c *UserControllerImpl) UpdateMe(ctx *gin.Context) {
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Success		204	{object}	httputil.Success
-//	@Failure		400	{object}	httputil.Error
-//	@Failure		500	{object}	httputil.Error
+//	@Success		204	{object}	api.Success
+//	@Failure		400	{object}	api.Error
+//	@Failure		500	{object}	api.Error
 //	@Router			/user/me [delete]
 func (c *UserControllerImpl) DeleteMe(ctx *gin.Context) {
 	// Get the user from the context
 	cu, err := middlewares.GetUserFromContext(ctx)
 	if err != nil {
-		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		api.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
 	// Delete the user from the database
 	err = c.userService.Delete(cu.ID)
 	if err != nil {
-		httputil.Ctx(ctx).InternalServerError().WithError(err).Send()
+		api.Ctx(ctx).InternalServerError().WithError(err).Send()
 		return
 	}
 
-	httputil.Ctx(ctx).NoContent().WithDescription("user deleted").Send()
+	api.Ctx(ctx).NoContent().WithDescription("user deleted").Send()
 }
 
 // FindAll godoc
@@ -151,22 +151,22 @@ func (c *UserControllerImpl) DeleteMe(ctx *gin.Context) {
 //	@Param			order	query		string	false	"Sort order (asc or desc)"
 //	@Param			search	query		string	false	"Search string"
 //	@Success		200		{object}	[]models.User
-//	@Failure		400		{object}	httputil.Error
-//	@Failure		500		{object}	httputil.Error
+//	@Failure		400		{object}	api.Error
+//	@Failure		500		{object}	api.Error
 //	@Router			/users [get]
-func (c *UserControllerImpl) FindAll(ctx *gin.Context) {
+func (c *UserControllerImpl) List(ctx *gin.Context) {
 	// Get the query parameters
-	queryParams := httputil.GetFilter(ctx)
+	queryParams := api.GetFilter(ctx)
 
 	// Find the users
 	users, err := c.userService.FindAll(queryParams)
 	if err != nil {
-		httputil.Ctx(ctx).InternalServerError().WithError(err).Send()
+		api.Ctx(ctx).InternalServerError().WithError(err).Send()
 		return
 	}
 
 	// Send the response
-	httputil.Ctx(ctx).Ok().SendRaw(users)
+	api.Ctx(ctx).Ok().SendRaw(users)
 }
 
 // FindById godoc
@@ -178,28 +178,28 @@ func (c *UserControllerImpl) FindAll(ctx *gin.Context) {
 //	@Produce		json
 //	@Param			id	path		string	true	"User id"
 //	@Success		200	{object}	models.User
-//	@Failure		400	{object}	httputil.Error
-//	@Failure		404	{object}	httputil.Success
-//	@Failure		500	{object}	httputil.Error
+//	@Failure		400	{object}	api.Error
+//	@Failure		404	{object}	api.Success
+//	@Failure		500	{object}	api.Error
 //	@Router			/users/{id} [get]
-func (c *UserControllerImpl) FindById(ctx *gin.Context) {
+func (c *UserControllerImpl) GetById(ctx *gin.Context) {
 	// Get the user id
 	id := ctx.Param("id")
 	// Parse the user id to uuid
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		api.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
 	// Find the user
 	user, err := c.userService.FindById(uid)
 	if err != nil {
-		httputil.Ctx(ctx).InternalServerError().WithError(err).Send()
+		api.Ctx(ctx).InternalServerError().WithError(err).Send()
 		return
 	}
 	if user == nil {
-		httputil.Ctx(ctx).NotFound().
+		api.Ctx(ctx).NotFound().
 			WithCode("user_error").
 			WithDescription("user not found").
 			Send()
@@ -207,7 +207,7 @@ func (c *UserControllerImpl) FindById(ctx *gin.Context) {
 	}
 
 	// Send the response
-	httputil.Ctx(ctx).Ok().SendRaw(user)
+	api.Ctx(ctx).Ok().SendRaw(user)
 }
 
 // Update godoc
@@ -220,9 +220,9 @@ func (c *UserControllerImpl) FindById(ctx *gin.Context) {
 //	@Param			id		path		string		true	"User id"
 //	@Param			user	body		models.User	true	"User information"
 //	@Success		200		{object}	models.User
-//	@Failure		400		{object}	httputil.Error
-//	@Failure		404		{object}	httputil.Success
-//	@Failure		500		{object}	httputil.Error
+//	@Failure		400		{object}	api.Error
+//	@Failure		404		{object}	api.Success
+//	@Failure		500		{object}	api.Error
 //	@Router			/users/{id} [patch]
 func (c *UserControllerImpl) Update(ctx *gin.Context) {
 	// Get the user id
@@ -230,25 +230,25 @@ func (c *UserControllerImpl) Update(ctx *gin.Context) {
 	// Parse the user id to uuid
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		api.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
 	// Retrieve the user from the request body
 	var payload models.User
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		api.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
 	// Get the user from the database
 	user, err := c.userService.FindById(uid)
 	if err != nil {
-		httputil.Ctx(ctx).InternalServerError().WithError(err).Send()
+		api.Ctx(ctx).InternalServerError().WithError(err).Send()
 		return
 	}
 	if user == nil {
-		httputil.Ctx(ctx).NotFound().
+		api.Ctx(ctx).NotFound().
 			WithCode("user_error").
 			WithDescription("user not found").
 			Send()
@@ -271,18 +271,18 @@ func (c *UserControllerImpl) Update(ctx *gin.Context) {
 
 	user, err = c.userService.Update(uid, user)
 	if err != nil {
-		httputil.Ctx(ctx).InternalServerError().WithError(err).Send()
+		api.Ctx(ctx).InternalServerError().WithError(err).Send()
 		return
 	}
 	if user == nil {
-		httputil.Ctx(ctx).NotFound().
+		api.Ctx(ctx).NotFound().
 			WithCode("user_error").
 			WithDescription("user not found").
 			Send()
 		return
 	}
 
-	httputil.Ctx(ctx).Ok().SendRaw(user)
+	api.Ctx(ctx).Ok().SendRaw(user)
 }
 
 // Delete godoc
@@ -293,10 +293,10 @@ func (c *UserControllerImpl) Update(ctx *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		string	true	"User id"
-//	@Success		204	{object}	httputil.Success
-//	@Failure		400	{object}	httputil.Error
-//	@Failure		404	{object}	httputil.Success
-//	@Failure		500	{object}	httputil.Error
+//	@Success		204	{object}	api.Success
+//	@Failure		400	{object}	api.Error
+//	@Failure		404	{object}	api.Success
+//	@Failure		500	{object}	api.Error
 //	@Router			/users/{id} [delete]
 func (c *UserControllerImpl) Delete(ctx *gin.Context) {
 	// Get the user id
@@ -304,16 +304,16 @@ func (c *UserControllerImpl) Delete(ctx *gin.Context) {
 	// Parse the user id to uuid
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		httputil.Ctx(ctx).BadRequest().WithError(err).Send()
+		api.Ctx(ctx).BadRequest().WithError(err).Send()
 		return
 	}
 
 	// Delete the user from the database
 	err = c.userService.Delete(uid)
 	if err != nil {
-		httputil.Ctx(ctx).InternalServerError().WithError(err).Send()
+		api.Ctx(ctx).InternalServerError().WithError(err).Send()
 		return
 	}
 
-	httputil.Ctx(ctx).NoContent().WithDescription("user deleted").Send()
+	api.Ctx(ctx).NoContent().WithDescription("user deleted").Send()
 }

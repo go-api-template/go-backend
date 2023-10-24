@@ -1,7 +1,8 @@
-package httputil
+package api
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -111,6 +112,12 @@ func (e *Error) WithData(data *any) *Error {
 
 // Send is used to send the response
 func (e *Error) Send() {
+	if len(e.Errors) == 0 && e.Description != "" {
+		e.Errors = append(e.Errors, errors.New(e.Description))
+	}
+	if len(e.Errors) > 0 && e.Description == "" {
+		e.Description = errors.Join(e.Errors...).Error()
+	}
 	e.r.ctx.JSON(e.r.status, e)
 }
 

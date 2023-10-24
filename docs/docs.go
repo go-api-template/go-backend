@@ -43,37 +43,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "412": {
                         "description": "Precondition Failed",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -108,19 +108,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -154,25 +154,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.AccessToken"
+                            "$ref": "#/definitions/token.AccessToken"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -206,37 +206,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "412": {
                         "description": "Precondition Failed",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -270,19 +270,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.AccessToken"
+                            "$ref": "#/definitions/token.AccessToken"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -305,13 +305,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -351,25 +351,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "412": {
                         "description": "Precondition Failed",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "502": {
                         "description": "Bad Gateway",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -401,19 +401,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -454,19 +454,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -489,19 +489,19 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -539,19 +539,19 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -615,13 +615,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -650,7 +650,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -688,19 +688,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -730,25 +730,25 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -793,19 +793,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Success"
+                            "$ref": "#/definitions/api.Success"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.Error"
+                            "$ref": "#/definitions/api.Error"
                         }
                     }
                 }
@@ -813,7 +813,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "httputil.Error": {
+        "api.Error": {
             "type": "object",
             "properties": {
                 "code": {
@@ -831,7 +831,7 @@ const docTemplate = `{
                 }
             }
         },
-        "httputil.Success": {
+        "api.Success": {
             "type": "object",
             "properties": {
                 "code": {
@@ -845,7 +845,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AccessToken": {
+        "token.AccessToken": {
             "type": "object",
             "properties": {
                 "access_token": {

@@ -1,4 +1,4 @@
-package httputil
+package api
 
 import (
 	"github.com/gin-gonic/gin"

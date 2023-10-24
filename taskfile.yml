@@ -62,3 +62,15 @@ tasks:
             - echo "{{.APP_ENV}}"
             - echo "{{.PROJECT_NAME}}({{.VERSION}}) will be running in '{{.APP_ENV}}' mode."
         silent: true
+
+    build:
+        desc: "Build the project."
+        cmds:
+            - task docker:build
+            - task go:build
+
+    run:
+        desc: "Run the project."
+        cmds:
+            - task docker:up
+            - task go:run

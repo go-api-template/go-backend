@@ -1,4 +1,4 @@
-package models
+package token
 
 // AccessToken is a struct for the access token
 // It is used to return the access token to the user
