@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,7 @@ import (
 	"github.com/go-api-template/go-backend/services"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -340,21 +342,24 @@ func (c *AuthControllerImpl) VerifyEmail(ctx *gin.Context) {
 //	@Router			/auth/refresh [post]
 func (c *AuthControllerImpl) RefreshTokens(ctx *gin.Context) {
 	var payload *models.UserToken
+	var refreshToken string
 
-	// Get the refresh token from the cookie
-	// if not found, get it from the body
-	refreshToken, err := ctx.Cookie(CtxRefreshToken)
-	if refreshToken != "" {
-		payload = &models.UserToken{Token: refreshToken}
-	} else if errors.Is(err, http.ErrNoCookie) {
-		// Get the refresh token from the body
-		if err := ctx.ShouldBindJSON(&payload); err != nil {
-			api.Ctx(ctx).BadRequest().WithError(err).Send()
+	body, _ := io.ReadAll(ctx.Request.Body)
+	println(string(body))
+	ctx.Request.Body = io.NopCloser(bytes.NewReader(body))
+
+	// Get the refresh token from the body
+	if errBind := ctx.ShouldBindJSON(&payload); errBind != nil {
+		// If the body is empty, get the refresh token from the cookie
+		ctxToken, errCtx := ctx.Cookie(CtxRefreshToken)
+		if ctxToken != "" {
+			refreshToken = ctxToken
+		} else if errors.Is(errCtx, http.ErrNoCookie) {
+			api.Ctx(ctx).BadRequest().WithError(errBind).WithError(errCtx).Send()
 			return
 		}
 	} else {
-		api.Ctx(ctx).BadRequest().WithError(err).Send()
-		return
+		refreshToken = payload.Token
 	}
 
 	// Validate the refresh token
