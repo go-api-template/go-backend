@@ -85,7 +85,7 @@ func (m *Mailer) SendMail(message *Message) {
 
 // sendMail sends the mail
 func (m *Mailer) sendMail(message *Message) {
-	// create a new gomail.Description
+	// create a new gomail.Message
 	mailMessage := ToMessage(message)
 
 	// get the mailer config

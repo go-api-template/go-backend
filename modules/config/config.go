@@ -21,7 +21,7 @@ var Config *AppConfig
 var version = "dev"
 var buildDate = "not defined"
 
-// AppConfig holds the configiration of the application
+// AppConfig holds the configuration of the application
 // It is loaded from environment variables and/or app.env file
 type AppConfig struct {
 	// App holds the application information

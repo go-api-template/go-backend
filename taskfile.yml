@@ -38,7 +38,7 @@ vars:
         desc: "The folder where the build is happening. Current folder/build"
         sh: echo "build"
     RELEASE_FOLDER:
-        desc: "The folder where the release is happening. Current folder/release"
+        desc: "The folder where the release is happening. Current folder/dist"
         sh: echo "dist"
 
 #env:

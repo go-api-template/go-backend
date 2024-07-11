@@ -1,5 +1,6 @@
 package models
 
+//
 import (
 	"database/sql"
 	"github.com/go-api-template/go-backend/modules/config"
